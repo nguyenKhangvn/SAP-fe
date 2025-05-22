@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, retry } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 export interface Payment {
   _id?: string;
@@ -26,7 +27,7 @@ export interface BatchPaymentRequest {
 
 @Injectable({ providedIn: 'root' })
 export class PaymentService {
-  private baseUrl = 'http://localhost:5000/api/payments';
+  private baseUrl = environment.apiUrl + '/payments';
 
   constructor(private http: HttpClient) {}
   getPayments(): Observable<Payment[]> {

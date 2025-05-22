@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, map, of } from 'rxjs';
 import { DebtRecord, DebtDetails } from '../models/debt.model';
+import { environment } from '../../environments/environment';
 
 export interface CustomerDebtResponse {
   customer: any; // You might have a Customer interface here
@@ -12,7 +13,7 @@ export interface CustomerDebtResponse {
 
 @Injectable({ providedIn: 'root' })
 export class DebtService {
-  private baseUrl = 'http://localhost:5000/api/debts';
+  private baseUrl = environment.apiUrl + '/debts';
 
   constructor(private http: HttpClient) {}
   /**
@@ -65,14 +66,14 @@ export class DebtService {
    * Record a payment against customer debt
    */
   payOrderDebt(paymentData: any): Observable<any> {
-    return this.http.post('http://localhost:5000/api/payments/pay-order-debt', paymentData);
+    return this.http.post(environment.apiUrl + '/payments/pay-order-debt', paymentData);
   }
 
   /**
    * Record batch payments for multiple orders
    */
   payBatchOrderDebt(batchPaymentData: any): Observable<any> {
-    return this.http.post('http://localhost:5000/api/payments/batch-payment', batchPaymentData);
+    return this.http.post(environment.apiUrl + '/payments/batch-payment', batchPaymentData);
   }
 
   /**

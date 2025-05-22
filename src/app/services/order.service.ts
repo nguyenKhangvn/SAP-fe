@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import { environment } from "src/environments/environment";
 
 export interface Order {
     _id?: string;
@@ -17,7 +18,7 @@ export interface Order {
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-    private readonly apiUrl = 'http://localhost:5000/api/orders'; // Adjust to your API URL
+    private readonly apiUrl =  environment.apiUrl + '/orders'; // Adjust to your API URL
     
     constructor(private http: HttpClient) {
 
