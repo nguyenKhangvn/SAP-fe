@@ -6,6 +6,18 @@
         <p>Đang xử lý...</p>
     </div>
 
+    <!-- Nút xuất Excel -->
+    <div class="export-excel-button" *ngIf="!isLoading">
+        <div class="export-controls">
+            <label for="monthPicker">Chọn tháng:</label>
+            <input id="monthPicker" type="month" (change)="onMonthChange($event)" />
+            <button mat-raised-button color="primary" (click)="exportToExcel(selectedMonth)">
+                <mat-icon>file_download</mat-icon> Xuất Excel
+            </button>
+        </div>
+
+    </div>
+
     <div class="table-responsive">
         <table mat-table [dataSource]="orders" class="mat-elevation-z2">
 

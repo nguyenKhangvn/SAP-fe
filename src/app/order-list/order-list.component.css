@@ -50,3 +50,42 @@
     display: block;
   }
 }
+.export-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+}
+
+.export-controls label {
+  font-weight: 500;
+  color: #3f51b5;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.export-controls input[type="month"] {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 150px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.export-controls input[type="month"]:focus {
+  border-color: #3f51b5;
+}
+
+.export-controls button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+

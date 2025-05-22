@@ -281,6 +281,9 @@ export class PaymentDialogComponent implements OnInit {
 
     // Restore original content
     document.body.innerHTML = originalContents;
+
+    // Close the dialog after printing
+    this.closeDialog();
   }
 
   private preparePrintContent(): string {
@@ -399,5 +402,9 @@ export class PaymentDialogComponent implements OnInit {
       horizontalPosition: 'center',
       verticalPosition: 'bottom',
     });
+  }
+
+  closeDialog(): void {
+    this.dialogRef.close();
   }
 }

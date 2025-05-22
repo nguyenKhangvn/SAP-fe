@@ -7,7 +7,7 @@ import { CustomersComponent } from './customers/customers.component';
 import { OrderComponent } from './order/order.component';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProductsComponent } from './products/products.component';
 import { PaymentsComponent } from './payments/payments.component';
@@ -39,6 +39,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { LoginComponent } from './login.component';
+import { JwtInterceptor } from './services/jwt.interceptor';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,6 +56,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     PaymentDialogComponent,
     OrderListComponent,
     StockManagementComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -77,13 +82,17 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatOptionModule,
     MatSelectModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatPaginatorModule,
     MatTooltipModule,
     MatExpansionModule,
     NgxMaskModule.forRoot(),
     MatCheckboxModule
   ],
-  providers: [DatePipe],
+  providers: [
+    DatePipe,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

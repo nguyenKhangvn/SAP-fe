@@ -1,0 +1,48 @@
+<div class="login-container">
+    <mat-card>
+        <mat-card-title>Đăng nhập</mat-card-title>
+        <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+            <ng-container *ngIf="!showTokenInput">
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Tên đăng nhập</mat-label>
+                    <input matInput name="username" [(ngModel)]="username" required />
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Mật khẩu</mat-label>
+                    <input matInput name="password" [(ngModel)]="password" type="password" required />
+                </mat-form-field>
+            </ng-container>
+            
+            <ng-container *ngIf="showTokenInput">
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>JWT Token</mat-label>
+                    <textarea 
+                        matInput 
+                        name="manualToken" 
+                        [(ngModel)]="manualToken" 
+                        rows="5"
+                        placeholder="Nhập JWT token của bạn"
+                        required>
+                    </textarea>
+                    <mat-hint>Dành cho phát triển và kiểm thử</mat-hint>
+                </mat-form-field>
+            </ng-container>
+            
+            <button mat-raised-button color="primary" class="full-width" [disabled]="loading">
+                {{ showTokenInput ? 'Xác nhận token' : 'Đăng nhập' }}
+            </button>
+            
+            <button 
+                type="button" 
+                mat-button 
+                class="full-width toggle-btn" 
+                (click)="toggleTokenInput()" 
+                [disabled]="loading">
+                {{ showTokenInput ? 'Quay lại đăng nhập thông thường' : 'Sử dụng token' }}
+            </button>
+            
+            <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+            <div *ngIf="error" class="error-message">{{ error }}</div>
+        </form>
+    </mat-card>
+</div>

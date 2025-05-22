@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../services/order.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-order-list',
@@ -15,6 +17,7 @@ export class OrderListComponent implements OnInit {
   selectedCustomer: any; 
   customers: any[] = [];
   isLoading = false;
+  selectedMonth: string = ''; // Lưu trữ tháng được chọn
 
   constructor(
     private http: HttpClient, 
@@ -59,5 +62,47 @@ export class OrderListComponent implements OnInit {
         }
       });
     }
+  }
+
+  exportToExcel(selectedMonth?: string): void {
+    let filteredOrders = this.orders;
+
+    if (selectedMonth) {
+      const [year, month] = selectedMonth.split('-').map(Number); // "2025-05" => [2025, 5]
+
+      filteredOrders = this.orders.filter(order => {
+        const orderDate = new Date(order.date);
+        return orderDate.getMonth() + 1 === month && orderDate.getFullYear() === year;
+      });
+
+      if (filteredOrders.length === 0) {
+        alert('Không có đơn hàng nào trong tháng đã chọn.');
+        return;
+      }
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(filteredOrders.map(order => ({
+      'Mã đơn': order.orderCode,
+      'Khách hàng': order.customerId?.name || '—',
+      'Ngày': new Date(order.date).toLocaleDateString('vi-VN'), // Định dạng ngày tháng năm
+      'Trạng thái': order.isPaid ? 'Đã thanh toán' : 'Còn nợ',
+      'Tổng tiền': order.total
+    })));
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Đơn hàng theo tháng');
+
+    const fileName = selectedMonth
+      ? `Don_hang_thang_${selectedMonth.replace('-', '_')}.xlsx`
+      : `Don_hang_tat_ca.xlsx`;
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, fileName);
+  }
+
+  onMonthChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedMonth = input.value; // Lưu giá trị tháng được chọn
   }
 }

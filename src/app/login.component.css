@@ -1,0 +1,37 @@
+/* Basic login form styles */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f5f6fa;
+}
+mat-card {
+  width: 350px;
+  padding: 32px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+mat-card-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.error-message {
+  color: #e53935;
+  margin-top: 12px;
+  text-align: center;
+}
+.toggle-btn {
+  margin-top: 8px;
+  color: #666;
+  font-size: 14px;
+}
+mat-progress-bar {
+  margin-top: 16px;
+}
