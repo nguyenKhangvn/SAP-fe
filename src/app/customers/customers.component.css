@@ -27,16 +27,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.customer-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.full-width {
-    width: 100%;
-}
-
 .search-container {
     display: flex;
     gap: 16px;
@@ -78,23 +68,7 @@ table {
 .empty-state {
     padding: 24px;
     text-align: center;
-}
-
-.no-records {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    color: #6c757d;
-    padding: 32px 0;
-}
-
-.no-records mat-icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
-    margin-bottom: 8px;
-    opacity: 0.6;
+    /* Remove if .shared-empty-state is used in template */
 }
 
 /* Mobile card styles */
@@ -110,24 +84,6 @@ table {
     margin-top: 8px;
     color: #666;
     font-size: 0.9rem;
-}
-
-.no-records-mobile {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    color: #6c757d;
-    padding: 32px 0;
-    text-align: center;
-}
-
-.no-records-mobile mat-icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
-    margin-bottom: 8px;
-    opacity: 0.6;
 }
 
 .btn-text {

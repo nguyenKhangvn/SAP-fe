@@ -1,0 +1,112 @@
+
+.dialog-form, .shared-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+mat-form-field, .shared-form-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* --- Table Styles --- */
+.table-responsive, .shared-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mat-table, .shared-table {
+  width: 100%;
+  min-width: 600px;
+}
+
+/* --- Status Badges --- */
+.paid, .badge-paid {
+  color: green;
+  font-weight: bold;
+}
+.debt, .badge-debt {
+  color: red;
+  font-weight: bold;
+}
+
+/* --- Empty State --- */
+.no-data-message, .shared-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 0;
+  color: #757575;
+}
+
+/* --- Responsive Utilities --- */
+.responsive-container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+@media (min-width: 576px) {
+  .responsive-container { max-width: 540px; }
+}
+@media (min-width: 768px) {
+  .responsive-container { max-width: 720px; }
+}
+@media (min-width: 992px) {
+  .responsive-container { max-width: 960px; }
+}
+@media (min-width: 1200px) {
+  .responsive-container { max-width: 1140px; }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+.col { position: relative; width: 100%; padding-right: 15px; padding-left: 15px; }
+.col-12 { flex: 0 0 100%; max-width: 100%; }
+.col-6 { flex: 0 0 50%; max-width: 50%; }
+.col-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+.col-3 { flex: 0 0 25%; max-width: 25%; }
+
+@media (max-width: 768px) {
+  .col-md-12 { flex: 0 0 100%; max-width: 100%; }
+  .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+  .col-md-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+}
+@media (max-width: 576px) {
+  .col-sm-12 { flex: 0 0 100%; max-width: 100%; }
+  .col-sm-6 { flex: 0 0 50%; max-width: 50%; }
+}
+
+/* Hide/show on mobile */
+@media (max-width: 576px) {
+  .hide-on-mobile { display: none !important; }
+  .show-on-mobile { display: initial !important; }
+}
+.show-on-mobile { display: none !important; }
+
+/* Padding/margin utilities */
+.p-responsive { padding: 1rem; }
+.m-responsive { margin: 1rem; }
+@media (max-width: 768px) {
+  .p-responsive { padding: 0.75rem; }
+  .m-responsive { margin: 0.75rem; }
+}
+@media (max-width: 576px) {
+  .p-responsive { padding: 0.5rem; }
+  .m-responsive { margin: 0.5rem; }
+}
+
+/* --- Misc --- */
+textarea, .shared-textarea { resize: none; }

@@ -196,59 +196,6 @@ canvas {
   background-color: #e74a3b;
 }
 
-/* Tables */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.data-table th, .data-table td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #e3e6f0;
-}
-
-.data-table th {
-  background-color: #f8f9fc;
-  color: #4e73df;
-  font-weight: 600;
-}
-
-.data-table tr:last-child td {
-  border-bottom: none;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-paid {
-  background-color: #e6f7ef;
-  color: #1cc88a;
-}
-
-.status-debt {
-  background-color: #fbeaea;
-  color: #e74a3b;
-}
-
-.debt-amount {
-  color: #e74a3b;
-  font-weight: bold;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-danger {
-  color: #e74a3b;
-}
-
 /* Inventory Summary */
 .inventory-summary {
   display: flex;
