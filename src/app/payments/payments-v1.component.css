@@ -1,0 +1,281 @@
+
+/* Loading state */
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 5;
+}
+
+.loading-overlay span {
+  margin-top: 16px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 32px;
+}
+
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.no-data-message mat-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 16px;
+}
+
+.no-data-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.no-data-mobile mat-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 16px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 600px) {
+  .responsive-container {
+    padding: 8px;
+  }
+
+  .main-card {
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .mat-card-header {
+    margin-bottom: 16px;
+  }
+
+  .title-section h2 {
+    font-size: 1.2rem;
+  }
+
+  .action-section {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filters-container mat-form-field {
+    width: 100%;
+  }
+
+  /* Hide tables on mobile */
+  .responsive-table {
+    display: none;
+  }
+
+  /* Show cards instead */
+  .payment-cards-mobile,
+  .debt-cards-mobile {
+    display: block;
+  }
+
+  .show-on-mobile {
+    display: block;
+  }
+}
+
+.filters-container mat-form-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Table styling */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+  min-width: 700px;
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 10;
+}
+
+/* Amount styling */
+.payment-amount {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.expense-amount {
+  color: #f44336;
+  font-weight: 500;
+}
+
+.debt-amount {
+  color: #f44336;
+  font-weight: 500;
+}
+
+.has-debt {
+  background-color: rgba(255, 235, 238, 0.3);
+}
+
+/* Card styling */
+.payment-cards-mobile,
+.debt-cards-mobile {
+  display: none;
+}
+
+.payment-card,
+.debt-card {
+  margin-bottom: 16px;
+}
+
+.payment-avatar,
+.debt-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e0e0e0;
+}
+
+.payment-avatar {
+  background-color: #e8f5e9;
+}
+
+.expense-avatar {
+  background-color: #ffebee;
+}
+
+.debt-avatar {
+  background-color: #fff8e1;
+}
+
+.payment-detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.payment-detail-row:last-child {
+  border-bottom: none;
+}
+
+.payment-detail-row .label {
+  font-weight: 500;
+  color: #616161;
+}
+
+.order-link {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.order-link:hover {
+  text-decoration: underline;
+}
+
+/* Empty state styling */
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 0;
+  color: #757575;
+}
+
+.no-data-message mat-icon,
+.no-data-mobile mat-icon {
+  font-size: 32px;
+  height: 32px;
+  width: 32px;
+  margin-bottom: 8px;
+}
+
+.empty-state {
+  text-align: center;
+}
+
+.no-data-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 0;
+  color: #757575;
+  text-align: center;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .payments-container {
+    padding: 12px;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .action-section {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .action-section button,
+  .action-section mat-button-toggle-group {
+    width: 100%;
+  }
+  
+  .filters-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .payments-container {
+    padding: 8px;
+  }
+  
+  .responsive-table {
+    display: none;
+  }
+  
+  .payment-cards-mobile,
+  .debt-cards-mobile {
+    display: block;
+  }
+}

@@ -14,7 +14,7 @@ import { DebtService } from '../services/debt.service';
 @Component({
   selector: 'app-payments',
   templateUrl: './payments.component.html',
-  styleUrls: ['./payments.component.css'],
+  styleUrls: ['./payments.component.css', './payments-v1.component.css'],
 })
 export class PaymentsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;

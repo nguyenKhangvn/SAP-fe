@@ -1,0 +1,223 @@
+
+.payment-details div {
+  margin-bottom: 8px;
+  display: flex;
+}
+
+.payment-details .label {
+  font-weight: 500;
+  width: 100px;
+  color: #555;
+}
+
+.payment-details .value {
+  font-weight: 500;
+}
+
+.success-message {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 600px) {
+  .payment-form {
+    min-width: auto;
+    padding: 0 5px; /* Thêm padding bên trong form cho màn hình nhỏ */
+  }
+  
+  .dialog-content {
+    padding: 8px;
+    max-height: 80vh; /* Tăng kích thước tối đa trên màn hình nhỏ */
+  }
+  
+  .order-card {
+    margin-bottom: 8px;
+  }
+  
+  .order-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 8px; /* Giảm padding ngang */
+    padding-bottom: 100px;
+  }
+
+  .payment-amount-field {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .payment-details div {
+    flex-direction: column;
+  }
+  
+  .payment-details .label {
+    width: auto;
+    margin-bottom: 4px;
+  }
+  
+  /* Cải thiện trải nghiệm cuộn trên thiết bị di động */
+  .scrollable-content {
+    -webkit-overflow-scrolling: touch;
+    padding-right: 5px; /* Giảm padding cho màn hình nhỏ */
+  }
+}
+
+/* Đảm bảo dialog có thể scroll khi nội dung vượt quá kích thước */
+.scrollable-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px; /* Tăng padding cho thanh cuộn */
+  margin-right: -5px; /* Bù trừ padding để tránh co hẹp nội dung */
+  padding-bottom: 10px; /* Thêm padding bên dưới để tránh nội dung bị che khuất */
+}
+
+/* Tùy chỉnh thanh cuộn cho đẹp */
+.scrollable-content::-webkit-scrollbar {
+  width: 8px; /* Tăng kích thước thanh cuộn để dễ sử dụng hơn */
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Đảm bảo dialog-actions luôn ở cuối và không bị scroll */
+.mat-dialog-actions {
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  padding: 4px 30px 8px 0px;
+  margin-bottom: 0;
+  z-index: 3; /* Tăng z-index để đảm bảo luôn hiển thị trên cùng */
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Tăng độ đậm của bóng */
+}
+
+/* Đảm bảo dialog-title luôn ở trên cùng và không bị scroll */
+.mat-dialog-title {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+  padding-top: 16px;
+  padding-left: 16px;
+  margin-top: -16px;
+}
+
+/* Thêm hiệu ứng bóng cho các thành phần */
+.mat-dialog-content, .mat-dialog-actions {
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+/* Cải thiện hiển thị của nút Submit */
+button[color="primary"] {
+  transition: transform 0.2s;
+}
+
+button[color="primary"]:hover:not([disabled]) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Thêm hiệu ứng khi scroll */
+.scrollable-content {
+  scroll-behavior: smooth;
+}
+
+/* Batch payment styles */
+.selected-orders-container {
+  margin-top: 15px;
+  margin-bottom: 10px; /* Thêm khoảng cách phía dưới */
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 15px;
+  background-color: #fafafa; /* Làm nổi bật hơn */
+}
+@media (max-width: 768px) {
+  .selected-orders-container {
+    padding-bottom: 160px;
+  }
+}
+
+.selected-orders-container h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-weight: 500;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 5px; /* Thêm padding cho thanh cuộn */
+  margin-bottom: 10px; /* Thêm khoảng cách dưới danh sách */
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border-left: 3px solid #1976d2;
+}
+
+.order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.order-code {
+  font-weight: 500;
+  color: #1976d2;
+}
+
+.order-amount {
+  font-size: 13px;
+  display: flex;
+  gap: 5px;
+}
+
+.payment-amount-field {
+  width: 150px;
+  margin-bottom: -16px;
+}
+
+/* Ensure forms don't get cut off at the bottom */
+form {
+  margin-bottom: 15px; /* Thêm khoảng cách dưới mỗi form */
+}
+
+
+.batch-info {
+  font-size: 1.1em;
+  margin-top: 10px;
+  color: #555;
+
+  .order-count {
+    font-weight: bold;
+    color: #007bff; 
+  }
+
+  .total-selected-amount {
+    font-weight: bold;
+    color: #28a745; 
+    font-size: 1.2em; 
+  }
+}

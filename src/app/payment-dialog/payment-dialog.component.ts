@@ -9,7 +9,9 @@ import { Observable, of } from 'rxjs'; // For 'of' in catchError example (though
 @Component({
   selector: 'app-payment-dialog',
   templateUrl: './payment-dialog.component.html',
-  styleUrls: ['./payment-dialog.component.css', './print-styles.css']
+  styleUrls: ['./payment-dialog.component.css',
+              './payment-dialog-v1.component.css',
+               './print-styles.css']
 })
 export class PaymentDialogComponent implements OnInit {
   paymentForm!: FormGroup;
