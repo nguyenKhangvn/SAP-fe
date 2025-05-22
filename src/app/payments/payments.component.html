@@ -1,0 +1,348 @@
+<div class="payments-container responsive-container">
+    <mat-card class="main-card">
+        <mat-card-header>
+            <mat-card-title class="header-content">
+                <div class="title-section">
+                    <mat-icon>{{ currentType === 'payment' ? 'payments' : 'money_off' }}</mat-icon>
+                    <h2>Danh sách phiếu {{ currentType === 'payment' ? 'thu' : 'chi' }}</h2>
+                </div>
+                <div class="action-section">
+                    <mat-button-toggle-group [(ngModel)]="viewMode" (change)="onViewModeChange()"
+                        aria-label="View Mode">
+                        <mat-button-toggle value="payments">Phiếu thu/chi</mat-button-toggle>
+                        <mat-button-toggle value="debts">Công nợ</mat-button-toggle>
+                    </mat-button-toggle-group>
+                    <button mat-raised-button color="primary" (click)="openDialog('add')">
+                        <mat-icon>add</mat-icon>
+                        <span class="button-text">Tạo phiếu {{ currentType === 'payment' ? 'thu' : 'chi' }}</span>
+                    </button>
+                </div>
+            </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <!-- Bộ lọc -->
+            <div class="filters-container">
+                <mat-form-field appearance="outline">
+                    <mat-label>Lọc theo khách hàng</mat-label>
+                    <mat-select [(ngModel)]="selectedCustomer" (selectionChange)="filterByCustomer()">
+                        <mat-option value="">Tất cả</mat-option>
+                        <mat-option *ngFor="let customer of customers" [value]="customer._id">
+                            {{ customer.name }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matPrefix>person</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Loại phiếu</mat-label>
+                    <mat-select [(ngModel)]="currentType" (selectionChange)="filterPayments()">
+                        <mat-option value="payment">Phiếu thu</mat-option>
+                        <mat-option value="expense">Phiếu chi</mat-option>
+                    </mat-select>
+                    <mat-icon matPrefix>category</mat-icon>
+                </mat-form-field>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div class="loading-overlay" *ngIf="isLoading">
+                <mat-spinner diameter="40"></mat-spinner>
+                <span>Đang tải dữ liệu...</span>
+            </div>
+
+            <!-- View Switcher Content -->
+            <div [ngSwitch]="viewMode">
+
+                <!-- PAYMENTS VIEW -->
+                <div *ngSwitchCase="'payments'">
+                    <!-- Payments Table (Desktop) -->
+                    <div class="table-responsive responsive-table">
+                        <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+                            <!-- STT -->
+                            <ng-container matColumnDef="index">
+                                <th mat-header-cell *matHeaderCellDef>#</th>
+                                <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
+                            </ng-container>
+
+                            <!-- Tên khách hàng -->
+                            <ng-container matColumnDef="customerName">
+                                <th mat-header-cell *matHeaderCellDef>Khách hàng</th>
+                                <td mat-cell *matCellDef="let element">{{ element.customerId?.name || 'Không xác định'
+                                    }}</td>
+                            </ng-container>
+
+                            <!-- Số tiền -->
+                            <ng-container matColumnDef="amount">
+                                <th mat-header-cell *matHeaderCellDef>Số tiền</th>
+                                <td mat-cell *matCellDef="let element"
+                                    [class.payment-amount]="currentType === 'payment'"
+                                    [class.expense-amount]="currentType === 'expense'">
+                                    {{ element.amount | number }} VND
+                                </td>
+                            </ng-container>
+
+                            <!-- Ngày -->
+                            <ng-container matColumnDef="date">
+                                <th mat-header-cell *matHeaderCellDef>Ngày</th>
+                                <td mat-cell *matCellDef="let element">{{ element.date | date: 'dd/MM/yyyy' }}</td>
+                            </ng-container>
+
+                            <!-- Liên kết đơn hàng -->
+                            <ng-container matColumnDef="orderId">
+                                <th mat-header-cell *matHeaderCellDef>Đơn hàng</th>
+                                <td mat-cell *matCellDef="let element">
+                                    <a *ngIf="element.orderId" [routerLink]="['/order-list']" class="order-link">
+                                        {{ element.orderId.orderCode || 'N/A' }}
+                                    </a>
+                                    <span *ngIf="!element.orderId">-</span>
+                                </td>
+                            </ng-container>
+
+                            <!-- Ghi chú -->
+                            <ng-container matColumnDef="note">
+                                <th mat-header-cell *matHeaderCellDef>Ghi chú</th>
+                                <td mat-cell *matCellDef="let element">{{ element.note || '-' }}</td>
+                            </ng-container>
+
+                            <!-- Hành động -->
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef></th>
+                                <td mat-cell *matCellDef="let element">
+                                    <button mat-icon-button color="accent" (click)="openDialog('edit', element)"
+                                        matTooltip="Sửa">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="warn" (click)="deletePayment(element)"
+                                        matTooltip="Xóa">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </td>
+                            </ng-container>
+
+                            <!-- Render header & row -->
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                            <!-- Empty state -->
+                            <tr class="mat-row" *matNoDataRow>
+                                <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+                                    <div class="no-data-message">
+                                        <mat-icon>info</mat-icon>
+                                        <p>Không có phiếu {{ currentType === 'payment' ? 'thu' : 'chi' }} nào</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Payments Mobile Cards -->
+                    <div class="payment-cards-mobile show-on-mobile">
+                        <mat-card *ngFor="let payment of dataSource.data; let i = index" class="payment-card">
+                            <mat-card-header>
+                                <div mat-card-avatar
+                                    [ngClass]="{'payment-avatar': currentType === 'payment', 'expense-avatar': currentType === 'expense'}">
+                                    <mat-icon>{{ currentType === 'payment' ? 'payments' : 'money_off' }}</mat-icon>
+                                </div>
+                                <mat-card-title>{{ payment.customerId?.name || 'Không xác định' }}</mat-card-title>
+                                <mat-card-subtitle>{{ payment.date | date: 'dd/MM/yyyy' }}</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="payment-detail-row">
+                                    <span class="label">Số tiền:</span>
+                                    <span class="value" [class.payment-amount]="currentType === 'payment'"
+                                        [class.expense-amount]="currentType === 'expense'">
+                                        {{ payment.amount | number }} VND
+                                    </span>
+                                </div>
+                                <div class="payment-detail-row" *ngIf="payment.orderId">
+                                    <span class="label">Đơn hàng:</span>
+                                    <a [routerLink]="['/order-list']" class="order-link">{{ payment.orderId ||
+                                        'N/A' }}</a>
+                                </div>
+                                <div class="payment-detail-row">
+                                    <span class="label">Ghi chú:</span>
+                                    <span class="value">{{ payment.note || '-' }}</span>
+                                </div>
+                            </mat-card-content>
+                            <mat-card-actions align="end">
+                                <button mat-button color="accent" (click)="openDialog('edit', payment)">
+                                    <mat-icon>edit</mat-icon> Sửa
+                                </button>
+                                <button mat-button color="warn" (click)="deletePayment(payment)">
+                                    <mat-icon>delete</mat-icon> Xóa
+                                </button>
+                            </mat-card-actions>
+                        </mat-card>
+
+                        <!-- Empty state for mobile -->
+                        <div class="no-data-mobile" *ngIf="dataSource.data.length === 0 && !isLoading">
+                            <mat-icon>info</mat-icon>
+                            <p>Không có phiếu {{ currentType === 'payment' ? 'thu' : 'chi' }} nào</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DEBTS VIEW -->
+                <div *ngSwitchCase="'debts'">
+                    <!-- Summary Box -->
+                    <mat-card class="debt-summary-card">
+                        <div class="debt-summary">
+                            <div class="debt-summary-item">
+                                <span class="summary-label">Tổng số khách hàng có công nợ:</span>
+                                <span class="summary-value">{{ debtDataSource.data.length }}</span>
+                            </div>
+                            <div class="debt-summary-item">
+                                <span class="summary-label">Tổng công nợ:</span>
+                                <span class="summary-value debt-amount">{{ totalDebt | number }} VND</span>
+                            </div>
+                            <div class="debt-actions">
+                                <button mat-raised-button color="primary" (click)="exportDebts()"
+                                    [disabled]="debtDataSource.data.length === 0">
+                                    <mat-icon>file_download</mat-icon>
+                                    <span>Xuất báo cáo</span>
+                                </button>
+                            </div>
+                        </div>
+                    </mat-card>
+
+                    <!-- Search field for debts -->
+                    <div class="search-container">
+                        <mat-form-field appearance="outline" class="search-field">
+                            <mat-label>Tìm kiếm khách hàng</mat-label>
+                            <input matInput (keyup)="applyDebtFilter($event)"
+                                placeholder="Nhập tên hoặc SĐT khách hàng">
+                            <mat-icon matSuffix>search</mat-icon>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Debts Table (Desktop) -->
+                    <div class="table-responsive responsive-table">
+                        <table mat-table [dataSource]="debtDataSource" class="mat-elevation-z2">
+                            <!-- STT -->
+                            <ng-container matColumnDef="index">
+                                <th mat-header-cell *matHeaderCellDef>#</th>
+                                <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
+                            </ng-container>
+
+                            <!-- Tên khách hàng -->
+                            <ng-container matColumnDef="customerName">
+                                <th mat-header-cell *matHeaderCellDef>Khách hàng</th>
+                                <td mat-cell *matCellDef="let element">{{ element.customerName }}</td>
+                            </ng-container>
+
+                            <!-- Tổng đơn hàng -->
+                            <ng-container matColumnDef="totalOrders">
+                                <th mat-header-cell *matHeaderCellDef>Tổng đơn hàng</th>
+                                <td mat-cell *matCellDef="let element">{{ element.totalOrderValue | number }} VND</td>
+                            </ng-container>
+
+                            <!-- Đã thanh toán -->
+                            <ng-container matColumnDef="totalPaid">
+                                <th mat-header-cell *matHeaderCellDef>Đã thanh toán</th>
+                                <td mat-cell *matCellDef="let element">{{ (element.totalPayments !== undefined ?
+                                    element.totalPayments : (element.totalOrderValue - element.remainingDebt)) | number
+                                    }} VND</td>
+                            </ng-container>
+
+                            <!-- Còn nợ -->
+                            <ng-container matColumnDef="remainingDebt">
+                                <th mat-header-cell *matHeaderCellDef>Còn nợ</th>
+                                <td mat-cell *matCellDef="let element" [class.debt-amount]="element.remainingDebt > 0">
+                                    {{ element.remainingDebt | number }} VND
+                                </td>
+                            </ng-container>
+
+                            <!-- Hành động -->
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef></th>
+                                <td mat-cell *matCellDef="let element">
+                                    <button mat-icon-button color="primary" (click)="viewDebtDetail(element)"
+                                        matTooltip="Xem chi tiết">
+                                        <mat-icon>visibility</mat-icon>
+                                    </button>
+                                    <!-- <button mat-icon-button color="accent" (click)="recordDebtPayment(element)"
+                                        matTooltip="Thanh toán nợ" [disabled]="element.remainingDebt <= 0">
+                                        <mat-icon>payment</mat-icon>
+                                    </button> -->
+                                    <button mat-icon-button color="primary" (click)="recordBatchDebtPayment(element)"
+                                        matTooltip="Thanh toán nhiều đơn hàng" [disabled]="element.remainingDebt <= 0">
+                                        <mat-icon>payments</mat-icon>
+                                    </button>
+                                </td>
+                            </ng-container>
+
+                            <!-- Render header & row -->
+                            <tr mat-header-row *matHeaderRowDef="debtColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: debtColumns;"
+                                [class.has-debt]="row.remainingDebt > 0"></tr>
+
+                            <!-- Empty state -->
+                            <tr class="mat-row" *matNoDataRow>
+                                <td class="mat-cell empty-state" [attr.colspan]="debtColumns.length">
+                                    <div class="no-data-message">
+                                        <mat-icon>info</mat-icon>
+                                        <p>Không có thông tin công nợ</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Debts Mobile Cards -->
+                    <div class="debt-cards-mobile show-on-mobile">
+                        <mat-card *ngFor="let debt of debtDataSource.data; let i = index" class="debt-card"
+                            [class.has-debt]="debt.remainingDebt > 0">
+                            <mat-card-header>
+                                <div mat-card-avatar class="debt-avatar">
+                                    <mat-icon>account_balance</mat-icon>
+                                </div>
+                                <mat-card-title>{{ debt.customerName }}</mat-card-title>
+                                <mat-card-subtitle>{{ debt.customerPhone || 'Không có SĐT' }}</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="payment-detail-row">
+                                    <span class="label">Tổng đơn hàng:</span>
+                                    <span class="value">{{ debt.totalOrders | number }} VND</span>
+                                </div>
+                                <div class="payment-detail-row">
+                                    <span class="label">Đã thanh toán:</span>
+                                    <span class="value">{{ debt.totalPaid | number }} VND</span>
+                                </div>
+                                <div class="payment-detail-row">
+                                    <span class="label">Còn nợ:</span>
+                                    <span class="value" [class.debt-amount]="debt.remainingDebt > 0">
+                                        {{ debt.remainingDebt | number }} VND
+                                    </span>
+                                </div>
+                            </mat-card-content>
+                            <mat-card-actions align="end">
+                                <button mat-button color="primary" (click)="viewDebtDetail(debt)">
+                                    <mat-icon>visibility</mat-icon> Chi tiết
+                                </button>
+                                <!-- <button mat-button color="accent" (click)="recordDebtPayment(debt)"
+                                    [disabled]="debt.remainingDebt <= 0">
+                                    <mat-icon>payment</mat-icon> Thanh toán
+                                </button> -->
+                                <button mat-button color="primary" (click)="recordBatchDebtPayment(debt)"
+                                    [disabled]="debt.remainingDebt <= 0">
+                                    <mat-icon>payments</mat-icon> Thanh toán nhiều đơn
+                                </button>
+                            </mat-card-actions>
+                        </mat-card>
+
+                        <!-- Empty state for mobile -->
+                        <div class="no-data-mobile" *ngIf="debtDataSource.data.length === 0 && !isLoading">
+                            <mat-icon>info</mat-icon>
+                            <p>Không có thông tin công nợ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <mat-paginator [length]="totalRecords" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 50]"
+                showFirstLastButtons (page)="onPageChange($event)">
+            </mat-paginator>
+        </mat-card-content>
+    </mat-card>
+</div>

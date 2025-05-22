@@ -1,0 +1,174 @@
+<div class="customer-container">
+    <mat-card class="main-card">
+        <mat-card-header>
+            <div class="header-container">
+                <mat-card-title>
+                    <h2><mat-icon>people</mat-icon> Quản lý Khách Hàng</h2>
+                </mat-card-title>
+            </div>
+        </mat-card-header>
+
+        <mat-card-content>
+            <!-- Form thêm/sửa khách hàng -->
+            <mat-card class="form-card">
+                <mat-card-header>
+                    <mat-card-title>
+                        {{ editingCustomer ? 'Chỉnh sửa khách hàng' : 'Thêm khách hàng mới' }}
+                    </mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content>
+                    <form class="customer-form">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Tên khách hàng</mat-label>
+                            <input matInput [(ngModel)]="currentCustomer.name" name="name"
+                                placeholder="Nhập tên khách hàng" required>
+                            <mat-icon matPrefix>person</mat-icon>
+                            <mat-error>Tên khách hàng là bắt buộc</mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Số điện thoại</mat-label>
+                            <input matInput [(ngModel)]="currentCustomer.phone" name="phone"
+                                placeholder="Nhập số điện thoại">
+                            <mat-icon matPrefix>phone</mat-icon>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Ghi chú</mat-label>
+                            <textarea matInput [(ngModel)]="currentCustomer.note" name="note"
+                                placeholder="Ghi chú về khách hàng" rows="3"></textarea>
+                            <mat-icon matPrefix>note</mat-icon>
+                        </mat-form-field>
+                    </form>
+                </mat-card-content>
+
+                <mat-card-actions align="end" class="form-actions">
+                    <button mat-button color="warn" *ngIf="editingCustomer" (click)="cancelEdit()">
+                        <mat-icon>cancel</mat-icon> <span class="btn-text">Hủy</span>
+                    </button>
+                    <button mat-raised-button color="primary" (click)="saveCustomer()">
+                        <mat-icon>{{ editingCustomer ? 'save' : 'add' }}</mat-icon>
+                        <span class="btn-text">{{ editingCustomer ? 'Cập nhật' : 'Thêm mới' }}</span>
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+
+            <!-- Danh sách khách hàng -->
+            <mat-card class="list-card">
+                <mat-card-header>
+                    <mat-card-title>Danh sách Khách Hàng</mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content>
+                    <div class="search-container">
+                        <mat-form-field appearance="outline" class="search-field">
+                            <mat-label>Tìm kiếm khách hàng</mat-label>
+                            <input matInput [(ngModel)]="searchTerm" placeholder="Tìm theo tên, SĐT..." name="search"
+                                (keyup.enter)="searchCustomers()">
+                            <mat-icon matPrefix>search</mat-icon>
+                            <button *ngIf="searchTerm" matSuffix mat-icon-button aria-label="Clear"
+                                (click)="searchTerm=''; searchCustomers()">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-form-field>
+
+                        <button mat-raised-button color="primary" (click)="searchCustomers()" class="search-button">
+                            <mat-icon>search</mat-icon> <span class="btn-text">Tìm kiếm</span>
+                        </button>
+                    </div>
+
+                    <!-- Loading spinner -->
+                    <div class="loading-overlay" *ngIf="isLoading">
+                        <mat-spinner diameter="40"></mat-spinner>
+                    </div>
+
+                    <!-- Mobile Card View (shown only on small screens) -->
+                    <div class="customer-cards-mobile">
+                        <mat-card *ngFor="let customer of customers" class="customer-card">
+                            <mat-card-header>
+                                <mat-icon mat-card-avatar>person</mat-icon>
+                                <mat-card-title>{{customer.name}}</mat-card-title>
+                                <mat-card-subtitle *ngIf="customer.phone">{{customer.phone}}</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content *ngIf="customer.note">
+                                <p class="note-text">{{customer.note}}</p>
+                            </mat-card-content>
+                            <mat-card-actions align="end">
+                                <button mat-icon-button color="primary" (click)="editCustomer(customer)"
+                                    matTooltip="Sửa">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button color="warn" (click)="deleteCustomer(customer._id ?? '')"
+                                    matTooltip="Xóa">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </mat-card-actions>
+                        </mat-card>
+
+                        <!-- Empty state for mobile view -->
+                        <div class="no-records-mobile" *ngIf="customers.length === 0 && !isLoading">
+                            <mat-icon>sentiment_dissatisfied</mat-icon>
+                            <p>Không có khách hàng nào được tìm thấy</p>
+                        </div>
+                    </div>
+
+                    <!-- Desktop Table (hidden on small screens) -->
+                    <div class="table-container mat-elevation-z2 responsive-table">
+                        <table mat-table [dataSource]="customers">
+                            <!-- Tên Khách Hàng Column -->
+                            <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef> Tên Khách Hàng </th>
+                                <td mat-cell *matCellDef="let customer"> {{customer.name}} </td>
+                            </ng-container>
+
+                            <!-- Số Điện Thoại Column -->
+                            <ng-container matColumnDef="phone">
+                                <th mat-header-cell *matHeaderCellDef> Số Điện Thoại </th>
+                                <td mat-cell *matCellDef="let customer"> {{customer.phone || '--'}} </td>
+                            </ng-container>
+
+                            <!-- Ghi Chú Column -->
+                            <ng-container matColumnDef="note">
+                                <th mat-header-cell *matHeaderCellDef> Ghi Chú </th>
+                                <td mat-cell *matCellDef="let customer"> {{customer.note || '--'}} </td>
+                            </ng-container>
+
+                            <!-- Thao Tác Column -->
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef> Thao Tác </th>
+                                <td mat-cell *matCellDef="let customer">
+                                    <button mat-icon-button color="primary" (click)="editCustomer(customer)"
+                                        matTooltip="Sửa">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="warn" (click)="deleteCustomer(customer._id ?? '')"
+                                        matTooltip="Xóa">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                            <!-- Empty State Row -->
+                            <tr class="mat-row" *matNoDataRow>
+                                <td class="mat-cell empty-state" colspan="4">
+                                    <div class="no-records">
+                                        <mat-icon>sentiment_dissatisfied</mat-icon>
+                                        <p>Không có khách hàng nào được tìm thấy</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <mat-paginator [length]="totalCustomers" [pageSize]="pageSize" [pageIndex]="currentPage - 1"
+                        [pageSizeOptions]="[5, 10, 25, 50]" (page)="onPageChange($event)">
+                    </mat-paginator>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
+</div>

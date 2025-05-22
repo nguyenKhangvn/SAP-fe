@@ -1,0 +1,54 @@
+<h2 mat-dialog-title class="dialog-title">
+    <mat-icon>{{ data.mode === 'add' ? 'add_circle' : 'edit' }}</mat-icon>
+    {{ dialogTitle }}
+</h2>
+
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="dialog-form">
+    <mat-dialog-content class="dialog-content">
+        <div class="form-grid">
+            <!-- Mã sản phẩm -->
+            <mat-form-field appearance="outline" floatLabel="always">
+                <mat-label>Mã sản phẩm</mat-label>
+                <mat-icon matPrefix>qr_code</mat-icon>
+                <input matInput formControlName="code" required>
+                <mat-error>Vui lòng nhập mã sản phẩm</mat-error>
+            </mat-form-field>
+
+            <!-- Tên sản phẩm -->
+            <mat-form-field appearance="outline" floatLabel="always">
+                <mat-label>Tên sản phẩm</mat-label>
+                <mat-icon matPrefix>drive_file_rename_outline</mat-icon>
+                <input matInput formControlName="name" required>
+                <mat-error>Vui lòng nhập tên sản phẩm</mat-error>
+            </mat-form-field>
+
+            <!-- Giá vốn -->
+            <mat-form-field appearance="outline" floatLabel="always">
+                <mat-label>Giá vốn</mat-label>
+                <span matPrefix>₫&nbsp;</span>
+                <input matInput type="text" formControlName="costPrice" [mask]="'separator'" [thousandSeparator]="','"
+                    required>
+                <mat-error>Giá không hợp lệ</mat-error>
+            </mat-form-field>
+
+            <!-- Giá bán -->
+            <mat-form-field appearance="outline" floatLabel="always">
+                <mat-label>Giá bán</mat-label>
+                <span matPrefix>₫&nbsp;</span>
+                <input matInput type="text" formControlName="salePrice" [mask]="'separator'" [thousandSeparator]="','"
+                    required>
+                <mat-error>Giá không hợp lệ</mat-error>
+            </mat-form-field>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="dialog-actions">
+        <button mat-button type="button" (click)="onCancel()">
+            <mat-icon>cancel</mat-icon> Hủy
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="productForm.invalid">
+            <mat-icon>{{ data.mode === 'add' ? 'add' : 'save' }}</mat-icon>
+            {{ data.mode === 'add' ? 'Thêm' : 'Lưu' }}
+        </button>
+    </mat-dialog-actions>
+</form>

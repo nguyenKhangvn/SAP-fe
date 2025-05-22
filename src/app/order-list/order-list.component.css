@@ -1,0 +1,119 @@
+.paid {
+  color: green;
+  font-weight: bold;
+}
+.debt {
+  color: red;
+  font-weight: bold;
+}
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  width: 100%;
+  min-width: 600px; /* Ensures table doesn't shrink too much on mobile */
+}
+
+/* Empty state styling */
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 0;
+  color: #757575;
+}
+
+.no-data-message mat-icon {
+  font-size: 32px;
+  height: 32px;
+  width: 32px;
+  margin-bottom: 8px;
+}
+
+.empty-state {
+  text-align: center;
+}
+
+.loading-overlay {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 10;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3f51b5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mobile order cards */
+.order-cards-mobile {
+  margin-top: 16px;
+  display: none;
+}
+
+.order-card {
+  margin-bottom: 16px;
+}
+
+.order-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.order-detail-row:last-child {
+  border-bottom: none;
+}
+
+.order-detail-row .label {
+  font-weight: 500;
+  color: #666;
+}
+
+.no-orders-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 0;
+  color: #757575;
+  text-align: center;
+}
+
+.no-orders-mobile mat-icon {
+  font-size: 32px;
+  height: 32px;
+  width: 32px;
+  margin-bottom: 8px;
+}
+
+/* Hide table on mobile, show cards */
+@media (max-width: 600px) {
+  .table-responsive {
+    display: none;
+  }
+  
+  .order-cards-mobile {
+    display: block;
+  }
+}

@@ -1,0 +1,144 @@
+<div class="stock-management-container">
+    <h2 class="page-title">Quản lý tồn kho</h2>
+
+    <div class="loading-overlay" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Đang xử lý...</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Cập nhật tồn kho</h3>
+        </div>
+        <div class="card-body">
+            <form [formGroup]="stockForm" (ngSubmit)="onSubmit()" class="stock-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productCode">Sản phẩm</label>
+                        <div class="select-wrapper">
+                            <select id="productCode" formControlName="productCode" class="form-control">
+                                <option value="">-- Chọn sản phẩm --</option>
+                                <option *ngFor="let product of products" [value]="product.code">
+                                    {{ product.code }} - {{ product.name | slice:0:20 }}{{ product.name.length > 20 ?
+                                    '...' : '' }}
+                                    <span *ngIf="product.newStock !== undefined">
+                                        (Tồn: {{ product.newStock }})
+                                    </span>
+                                </option>
+                            </select>
+                        </div>
+                        <div class="error-message"
+                            *ngIf="stockForm.get('productCode')?.invalid && stockForm.get('productCode')?.touched">
+                            Vui lòng chọn sản phẩm
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type">Loại giao dịch</label>
+                        <div class="select-wrapper">
+                            <select id="type" formControlName="type" class="form-control">
+                                <option value="import">Nhập kho</option>
+                                <option value="export">Xuất kho</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity">Số lượng</label>
+                        <input type="number" id="quantity" formControlName="quantity" class="form-control" min="1">
+                        <div class="error-message"
+                            *ngIf="stockForm.get('quantity')?.errors?.['required'] && stockForm.get('quantity')?.touched">
+                            Vui lòng nhập số lượng
+                        </div>
+                        <div class="error-message"
+                            *ngIf="stockForm.get('quantity')?.errors?.['min'] && stockForm.get('quantity')?.touched">
+                            Số lượng phải lớn hơn 0
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Ghi chú</label>
+                    <textarea id="notes" formControlName="notes" class="form-control" rows="2"></textarea>
+                </div>
+
+                <div class="product-details" *ngIf="selectedProduct">
+                    <h4>Thông tin kho</h4>
+                    <div class="details-row">
+                        <span>Tồn kho hiện tại:</span>
+                        <span [ngClass]="getStockStatusClass(selectedProduct.newStock || 0)">
+                            {{ selectedProduct.newStock || 0 }}
+                        </span>
+                    </div>
+                    <div class="details-row">
+                        <span>Đã nhập:</span>
+                        <span>{{ selectedProduct.imported || 0 }}</span>
+                    </div>
+                    <div class="details-row">
+                        <span>Đã xuất:</span>
+                        <span>{{ selectedProduct.exported || 0 }}</span>
+                    </div>
+                    <div class="details-row">
+                        <span>Giá vốn:</span>
+                        <span>{{ formatCurrency(selectedProduct.costPrice) }} ₫</span>
+                    </div>
+                    <div class="details-row">
+                        <span>Giá bán:</span>
+                        <span>{{ formatCurrency(selectedProduct.salePrice) }} ₫</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" [disabled]="stockForm.invalid">
+                        {{ stockForm.get('type')?.value === 'import' ? 'Nhập kho' : 'Xuất kho' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card" *ngIf="selectedProduct">
+        <div class="card-header">
+            <h3>Lịch sử tồn kho - {{ selectedProduct.name }}</h3>
+        </div>
+        <div class="card-body">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Loại</th>
+                        <th>Số lượng</th>
+                        <th>Tồn trước</th>
+                        <th>Tồn sau</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let entry of stockHistory">
+                        <td>{{ formatDate(entry.date) }}</td>
+                        <td>
+                            <span class="badge" [ngClass]="entry.type === 'import' ? 'badge-success' : 'badge-danger'">
+                                {{ entry.type === 'import' ? 'Nhập kho' : 'Xuất kho' }}
+                            </span>
+                        </td>
+                        <td>{{ entry.quantity }}</td>
+                        <td>{{ entry.oldStock }}</td>
+                        <td>{{ entry.newStock }}</td>
+                        <td>{{ entry.notes || '-' }}</td>
+                    </tr>
+                    <tr *ngIf="stockHistory.length === 0">
+                        <td colspan="6" class="text-center">Không có lịch sử tồn kho cho sản phẩm này</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card empty-state" *ngIf="!selectedProduct && !isLoading">
+        <div class="card-body text-center">
+            <div class="empty-icon">📦</div>
+            <h4>Chọn một sản phẩm để xem lịch sử tồn kho</h4>
+            <p>Bạn có thể thêm hoặc trừ số lượng tồn kho sau khi chọn sản phẩm</p>
+        </div>
+    </div>
+</div>

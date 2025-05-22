@@ -1,0 +1,149 @@
+<div class="order-container responsive-container">
+    <mat-card class="order-card">
+        <mat-card-header>
+            <mat-card-title>
+                <h2><mat-icon>shopping_cart</mat-icon> Đặt đơn hàng</h2>
+            </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <div class="form-grid">
+                <!-- <mat-form-field appearance="outline">
+                    <mat-label>Mã đơn hàng</mat-label>
+                    <input matInput [(ngModel)]="orderCode" placeholder="VD: HD001">
+                    <mat-icon matPrefix>receipt</mat-icon>
+                </mat-form-field> -->
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Khách hàng</mat-label>
+                    <mat-select [(ngModel)]="selectedCustomer">
+                        <mat-option [value]="null">-- Chọn khách --</mat-option>
+                        <mat-option *ngFor="let c of customers" [value]="c._id">{{ c.name }}</mat-option>
+                    </mat-select>
+                    <mat-icon matPrefix>person</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Trạng thái</mat-label>
+                    <mat-select [(ngModel)]="status">
+                        <mat-option value="paid">Đã thanh toán</mat-option>
+                        <mat-option value="debt">Còn nợ</mat-option>
+                    </mat-select>
+                    <mat-icon matPrefix>payments</mat-icon>
+                </mat-form-field>
+            </div>
+
+            <mat-divider class="section-divider"></mat-divider>
+
+            <h3 class="order-detail-heading">
+                <mat-icon>list_alt</mat-icon> Chi tiết đơn hàng
+            </h3>
+
+            <!-- Mobile view of order items - card style -->
+            <div class="order-items-mobile">
+                <mat-card *ngFor="let item of orderItems; let i = index" class="order-item-card">
+                    <mat-card-content>
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Sản phẩm</mat-label>
+                            <mat-select [(ngModel)]="item.productCode" (selectionChange)="onProductChange(item)">
+                                <mat-option [value]="null">-- Chọn --</mat-option>
+                                <mat-option *ngFor="let p of products" [value]="p.code">{{ p.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <div class="quantity-price-row">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Số lượng</mat-label>
+                                <input matInput type="number" [(ngModel)]="item.quantity" min="1">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Giá (VND)</mat-label>
+                                <input matInput type="number" [(ngModel)]="item.price">
+                                <mat-hint *ngIf="item.productCode">Giá bán: {{ item.price | number:'1.0-0' }}
+                                    VND</mat-hint>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="item-total" *ngIf="item.quantity && item.price">
+                            <span>Thành tiền: <strong>{{ item.quantity * item.price | number:'1.0-0' }}
+                                    VND</strong></span>
+                        </div>
+
+                        <div class="item-actions">
+                            <button mat-mini-fab color="warn" (click)="removeItem(i)" aria-label="Xóa sản phẩm">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+            <!-- Desktop view of order items - table style -->
+            <div class="order-items-desktop">
+                <table class="order-items-table">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá (VND)</th>
+                            <th>Thành tiền</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of orderItems; let i = index">
+                            <td>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-select [(ngModel)]="item.productCode"
+                                        (selectionChange)="onProductChange(item)">
+                                        <mat-option [value]="null">-- Chọn --</mat-option>
+                                        <mat-option *ngFor="let p of products" [value]="p.code">{{ p.name
+                                            }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline">
+                                    <input matInput type="number" [(ngModel)]="item.quantity" min="1">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Giá (VND)</mat-label>
+                                    <input matInput type="number" [(ngModel)]="item.price">
+                                    <mat-hint *ngIf="item.productCode">Giá bán: {{ item.price | number:'1.0-0' }}
+                                        VND</mat-hint>
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <span class="item-total">{{ item.quantity * item.price | number:'1.0-0' }} VND</span>
+                            </td>
+                            <td>
+                                <button mat-icon-button color="warn" (click)="removeItem(i)" matTooltip="Xóa sản phẩm">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="button-row">
+                <button mat-stroked-button color="primary" (click)="addItem()">
+                    <mat-icon>add</mat-icon> Thêm sản phẩm
+                </button>
+            </div>
+
+            <div class="total">
+                <strong>Tổng tiền:</strong> {{ getTotal() | number:'1.0-0' }} VND
+            </div>
+
+            <div class="actions">
+                <button mat-raised-button color="primary" (click)="submitOrder()" [disabled]="!isFormValid()">
+                    <mat-icon>save</mat-icon> Tạo đơn hàng
+                </button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

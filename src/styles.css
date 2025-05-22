@@ -1,1 +1,338 @@
-/* You can add global styles to this file, and also import other style files */
+/* Toàn bộ app */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 16px;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+/* Responsive base font size */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+/* Căn giữa dialog theo chiều dọc + ngang */
+.centered-dialog .mat-dialog-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 50hv;
+  border-radius: 12px;
+  padding: 24px 24px;
+  box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2),
+              0 24px 38px 3px rgba(0, 0, 0, 0.14),
+              0 9px 46px 8px rgba(0, 0, 0, 0.12);
+  animation: fadeIn 0.3s ease-out;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Form dialog layout */
+.dialog-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.dialog-content {
+  padding-top: 8px;
+  padding-left: 16px;
+  padding-bottom: 16px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Animation mở dialog */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 400px) {
+  .centered-dialog .mat-dialog-container {
+    width: 95vw;
+    max-width: 95vw;
+    margin: 0 auto;
+    border-radius: 8px;
+  }
+
+  .dialog-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dialog-actions button {
+    width: 100%;
+  }
+}
+
+/* Responsive dialog styles */
+.responsive-dialog .mat-dialog-container {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .mat-dialog-container {
+    padding: 12px !important;
+  }
+  
+  .mat-dialog-content {
+    padding: 16px !important;
+    max-height: 70vh !important;
+  }
+  
+  .mat-dialog-actions {
+    padding: 8px !important;
+    margin-bottom: 0 !important;
+  }
+  
+  /* Adjust dialog position for mobile */
+  .cdk-overlay-pane {
+    max-width: 95vw !important;
+  }
+}
+
+/* Global Responsive Utilities */
+.responsive-container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 576px) {
+  .responsive-container {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 768px) {
+  .responsive-container {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 992px) {
+  .responsive-container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .responsive-container {
+    max-width: 1140px;
+  }
+}
+
+/* Responsive Grid System */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col {
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+/* Responsive columns */
+.col-12 { flex: 0 0 100%; max-width: 100%; }
+.col-6 { flex: 0 0 50%; max-width: 50%; }
+.col-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+.col-3 { flex: 0 0 25%; max-width: 25%; }
+
+@media (max-width: 768px) {
+  .col-md-12 { flex: 0 0 100%; max-width: 100%; }
+  .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+  .col-md-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+}
+
+@media (max-width: 576px) {
+  .col-sm-12 { flex: 0 0 100%; max-width: 100%; }
+  .col-sm-6 { flex: 0 0 50%; max-width: 50%; }
+}
+
+/* Responsive tables for mobile */
+@media (max-width: 768px) {
+  .responsive-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mat-table {
+    min-width: 600px;
+  }
+}
+
+/* Hide elements on mobile */
+@media (max-width: 576px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+/* Show elements only on mobile */
+.show-on-mobile {
+  display: none !important;
+}
+
+@media (max-width: 576px) {
+  .show-on-mobile {
+    display: initial !important;
+  }
+}
+
+/* Responsive padding and margin */
+.p-responsive {
+  padding: 1rem;
+}
+.m-responsive {
+  margin: 1rem;
+}
+
+@media (max-width: 768px) {
+  .p-responsive {
+    padding: 0.75rem;
+  }
+  .m-responsive {
+    margin: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .p-responsive {
+    padding: 0.5rem;
+  }
+  .m-responsive {
+    margin: 0.5rem;
+  }
+}
+
+/* Responsive Dropdowns */
+select.mat-select,
+.mat-select-value,
+.mat-select-panel {
+  max-width: 100%;
+  width: 100%;
+  white-space: normal !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.mat-option-text, 
+.mat-select-min-line {
+  white-space: normal !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block !important;
+}
+
+.mat-select-panel {
+  max-height: 70vh !important;
+  overflow-y: auto !important;
+}
+
+.mat-option {
+  height: auto !important;
+  line-height: 1.2 !important;
+  padding: 10px 16px !important;
+}
+
+/* Fix for dropdown positioning */
+.cdk-overlay-pane {
+  /* max-width: 95vw !important;
+  width: 95vw !important; */
+  max-height: 70vh !important;
+  margin-top: 45px;
+}
+
+.cdk-overlay-pane .mat-select-panel {
+  /* max-width: 95vw !important;
+  width: 95vw !important; */
+}
+
+/* Fix for large tables */
+.mat-table {
+  width: 100%;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Highlight for scrollable tables */
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+  padding-left: 16px !important;
+}
+
+.mat-form-field {
+  padding: 0 16px 0 16px;
+} */

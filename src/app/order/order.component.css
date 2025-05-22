@@ -1,0 +1,176 @@
+.order-container {
+  padding: 16px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.order-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-header {
+  margin-bottom: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.section-divider {
+  margin: 24px 0;
+}
+
+.order-detail-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.order-items-desktop {
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.order-items-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.order-items-table th {
+  text-align: left;
+  padding: 12px;
+  background-color: #f5f5f5;
+  font-weight: 500;
+}
+
+.order-items-table td {
+  padding: 8px 12px;
+  vertical-align: top;
+}
+
+.order-items-mobile {
+  display: none;
+}
+
+.order-item-card {
+  margin-bottom: 16px;
+}
+
+.quantity-price-row {
+  display: flex;
+  gap: 16px;
+}
+
+.item-actions {
+  text-align: right;
+  margin-top: 8px;
+}
+
+.button-row {
+  margin: 16px 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.total {
+  font-size: 1.2rem;
+  margin: 24px 0;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  text-align: right;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .order-container {
+    padding: 12px;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+  
+  .actions button {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .order-container {
+    padding: 8px;
+  }
+  
+  .order-items-desktop {
+    display: none;
+  }
+  
+  .order-items-mobile {
+    display: block;
+  }
+  
+  .quantity-price-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .total {
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .order-row {
+    grid-template-columns: 1fr;
+  }
+
+  .order-row select,
+  .order-row input {
+    width: 100%;
+  }
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+}
+
+/* Hiển thị giá và thành tiền */
+.item-total {
+  font-weight: 500;
+  color: #3f51b5;
+  padding: 8px 0;
+  display: block;
+  margin-top: 4px;
+}
+
+/* Đảm bảo mat-hint hiển thị đúng */
+.mat-form-field-hint-wrapper {
+  display: block !important;
+}
+
+/* Style cho thông báo giá */
+.mat-hint {
+  color: #3f51b5 !important;
+  font-weight: 500;
+}

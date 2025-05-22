@@ -1,0 +1,90 @@
+.dialog-title {
+  margin-bottom: 8px;
+  padding: 20px 24px 0;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.dialog-content {
+  padding: 24px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: white;
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.mat-form-field-wrapper {
+  padding-left: 16px !important;
+}
+mat-form-field .mat-form-field-wrapper {
+  padding-bottom: 1.2em;
+}
+
+mat-form-field .mat-form-field-flex {
+  align-items: center;
+}
+
+mat-icon {
+  margin-right: 8px;
+  color: #666;
+}
+
+/* Lỗi đẹp hơn */
+mat-error {
+  color: #d32f2f;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Action buttons */
+.dialog-actions {
+  margin-top: 16px;
+  padding: 0 24px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Dialog bo góc + bóng đổ nhẹ */
+.mat-dialog-container {
+  border-radius: 12px !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .dialog-actions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+
+  .dialog-actions button {
+    width: 100%;
+  }
+
+  .dialog-content {
+    padding: 16px;
+  }
+}

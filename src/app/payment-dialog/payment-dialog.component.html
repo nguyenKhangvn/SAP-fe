@@ -1,0 +1,300 @@
+<!-- filepath: d:\SAP\SPA\src\app\payment-dialog\payment-dialog.component.html -->
+<h2 mat-dialog-title>{{ dialogTitle }}</h2>
+
+<mat-dialog-content class="dialog-content scrollable-content">
+    <!-- Regular Payment Form -->
+    <form *ngIf="['add', 'edit'].includes(dialogMode)" [formGroup]="paymentForm" class="payment-form">
+        <!-- Khách hàng -->
+        <mat-form-field appearance="outline">
+            <mat-label>Khách hàng</mat-label>
+            <mat-select formControlName="customerId" required>
+                <mat-option value="">-- Chọn khách hàng --</mat-option>
+                <mat-option *ngFor="let customer of customers" [value]="customer._id">
+                    {{ customer.name }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="paymentForm.get('customerId')?.hasError('required')">
+                Vui lòng chọn khách hàng
+            </mat-error>
+        </mat-form-field>
+
+        <!--Đơn hàng-->
+        <mat-form-field appearance="outline">
+            <mat-label>Đơn hàng</mat-label>
+            <mat-select formControlName="orderId">
+                <mat-option value="">-- Chọn đơn hàng --</mat-option>
+                <mat-option *ngFor="let order of orders" [value]="order._id">
+                    {{ order._id }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="paymentForm.get('orderId')?.hasError('required')">
+                Vui lòng chọn đơn hàng
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Số tiền -->
+        <mat-form-field appearance="outline">
+            <mat-label>Số tiền</mat-label>
+            <input matInput type="number" formControlName="amount" required>
+            <span matSuffix>VND</span>
+            <mat-error *ngIf="paymentForm.get('amount')?.hasError('required')">
+                Vui lòng nhập số tiền
+            </mat-error>
+            <mat-error *ngIf="paymentForm.get('amount')?.hasError('min')">
+                Số tiền phải lớn hơn 0
+            </mat-error>
+        </mat-form-field>
+
+
+        <!-- Ngày thu/chi -->
+        <mat-form-field appearance="outline">
+            <mat-label>Ngày {{ data?.type === 'payment' ? 'thu' : 'chi' }}</mat-label>
+            <input matInput type="date" formControlName="date" required>
+            <mat-error *ngIf="paymentForm.get('date')?.hasError('required')">
+                Vui lòng chọn ngày
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Ghi chú -->
+        <mat-form-field appearance="outline">
+            <mat-label>Ghi chú</mat-label>
+            <textarea matInput formControlName="note" rows="3"></textarea>
+        </mat-form-field>
+    </form>
+
+    <!-- Debt Payment Form -->
+    <form *ngIf="dialogMode === 'pay-debt'" [formGroup]="paymentForm" class="payment-form">
+        <div class="customer-info">
+            <h3>{{ data?.customer?.customerName }}</h3>
+            <p class="debt-info">Công nợ hiện tại: <span class="debt-amount">{{ data?.customer?.remainingDebt | number
+                    }} VND</span></p>
+        </div>
+
+        <!-- Số tiền thanh toán -->
+        <mat-form-field appearance="outline">
+            <mat-label>Số tiền thanh toán</mat-label>
+            <input matInput type="number" formControlName="amount" min="0" [max]="data?.customer?.remainingDebt || 0"
+                required>
+            <span matSuffix>VND</span>
+            <mat-hint align="end" *ngIf="paymentForm.get('amount')?.value">{{ paymentForm.get('amount')?.value | number
+                }} VND</mat-hint>
+            <mat-error *ngIf="paymentForm.get('amount')?.hasError('required')">
+                Vui lòng nhập số tiền
+            </mat-error>
+            <mat-error *ngIf="paymentForm.get('amount')?.hasError('min')">
+                Số tiền phải lớn hơn 0
+            </mat-error>
+            <mat-error *ngIf="paymentForm.get('amount')?.hasError('max')">
+                Số tiền không được vượt quá công nợ
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Ngày thanh toán -->
+        <mat-form-field appearance="outline">
+            <mat-label>Ngày thanh toán</mat-label>
+            <input matInput type="date" formControlName="date" required>
+        </mat-form-field>
+
+        <!-- Ghi chú -->
+        <mat-form-field appearance="outline">
+            <mat-label>Ghi chú</mat-label>
+            <textarea matInput formControlName="note" rows="3"></textarea>
+        </mat-form-field>
+
+        <!-- Payment method selection -->
+        <mat-form-field appearance="outline">
+            <mat-label>Phương thức thanh toán</mat-label>
+            <mat-select formControlName="paymentMethod">
+                <mat-option value="cash">Tiền mặt</mat-option>
+                <mat-option value="bank">Chuyển khoản</mat-option>
+                <mat-option value="card">Thẻ</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+
+    <!-- Batch Payment Form -->
+    <form *ngIf="dialogMode === 'batch-payment'" [formGroup]="paymentForm" class="payment-form">
+        <div class="customer-info">
+            <h3>{{ data?.customer?.customerName }}</h3>
+            <p class="batch-info">
+                Đã chọn <span class="order-count">{{ selectedOrderCount }}</span> đơn hàng
+                <span *ngIf="selectedOrderCount > 0"> với tổng số tiền: <span class="total-selected-amount">{{
+                        paymentForm.get('totalAmount')?.value | number }} VND</span></span>
+                <span *ngIf="selectedOrderCount === 0">(Vui lòng chọn đơn hàng)</span>
+            </p>
+        </div>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Tổng tiền thanh toán</mat-label>
+            <input matInput type="number" formControlName="totalAmount" min="0" required readonly>
+            <span matSuffix>VND</span>
+            <mat-hint align="end" *ngIf="paymentForm.get('totalAmount')?.value">{{ paymentForm.get('totalAmount')?.value
+                | number
+                }} VND</mat-hint>
+            <mat-error *ngIf="paymentForm.get('totalAmount')?.hasError('required')">
+                Vui lòng nhập số tiền
+            </mat-error>
+            <mat-error *ngIf="paymentForm.get('totalAmount')?.hasError('min')">
+                Số tiền phải lớn hơn 0
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Ngày thanh toán</mat-label>
+            <input matInput type="date" formControlName="date" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Ghi chú</mat-label>
+            <textarea matInput formControlName="note" rows="2"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Phương thức thanh toán</mat-label>
+            <mat-select formControlName="paymentMethod">
+                <mat-option value="cash">Tiền mặt</mat-option>
+                <mat-option value="bank">Chuyển khoản</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <div class="selected-orders-container">
+            <h4>Chi tiết thanh toán các đơn hàng</h4>
+
+            <div class="orders-list" formArrayName="selectedOrders">
+                <div *ngFor="let orderControl of orderFormArray.controls; let i = index" [formGroupName]="i"
+                    class="order-item">
+                    <mat-checkbox class="order-checkbox" formControlName="selected" (change)="onOrderSelectionChange()">
+                    </mat-checkbox>
+                    <div class="order-details-group">
+                        <div class="order-info">
+                            <div class="order-code">{{ orderControl.get('orderCode')?.value }}</div>
+                            <div class="order-amount">
+                                <span class="label">Còn nợ:</span>
+                                <span class="value">{{ orderControl.get('remaining')?.value | number }} VND</span>
+                            </div>
+                        </div>
+                        <mat-form-field appearance="outline" class="payment-amount-field">
+                            <mat-label>Thanh toán</mat-label>
+                            <input matInput type="number" formControlName="payAmount" min="0"
+                                [max]="orderControl.get('remaining')?.value" (input)="updateTotalAmount()"
+                                [readonly]="!orderControl.get('selected')?.value"> <span matSuffix>VND</span>
+                            <mat-error *ngIf="orderControl.get('payAmount')?.hasError('max')">
+                                Không được vượt quá số nợ
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- View Debt Details -->
+    <div *ngIf="dialogMode === 'view-debt'" class="debt-details">
+        <div class="customer-info">
+            <h3>Tên khách hàng: {{ data?.debtDetails?.customerName }}</h3>
+            <p>Tổng công nợ: <span class="debt-amount">{{ data?.debtDetails?.totalDebt | number }} VND</span></p>
+            <!-- <p>Ngày bắt đầu công nợ: {{ data?.debtDetails?.startDate | date: 'dd/MM/yyyy' }}</p>
+            <p>Ngày kết thúc công nợ: {{ data?.debtDetails?.endDate | date: 'dd/MM/yyyy' }}</p> -->
+        </div>
+
+        <div class="debt-orders">
+            <div class="debt-header">
+                <h4>Chi tiết đơn hàng chưa thanh toán đủ</h4>
+                <button mat-icon-button color="primary" (click)="printDebtDetails()" matTooltip="In thông tin">
+                    <mat-icon>print</mat-icon>
+                </button>
+            </div>
+
+            <div *ngIf="data?.debtDetails?.orders && data?.debtDetails?.orders.length > 0" class="order-list">
+                <mat-card *ngFor="let order of data?.debtDetails?.orders" class="order-card">
+                    <div class="order-header">
+                       <div class="order-code">Mã đơn hàng: {{ order.orderCode }}</div>
+
+                        <span class="order-date">Ngày: {{ order.orderDate | date: 'dd/MM/yyyy' }}</span>
+                    </div>
+                    <div class="order-body">
+                        <!-- <div class="order-detail">
+                            <span class="label">Tổng đơn hàng:</span>
+                            <span class="value">{{ order.total | number }}</span>
+                        </div> -->
+                        <!-- <div class="order-detail">
+                            <span class="label">Đã thanh toán:</span>
+                            <span class="value">{{ order.paid | number }} VND</span>
+                        </div> -->
+                        <div class="order-detail">
+                            <span class="label">Còn nợ: </span>
+                            <span class="value debt-amount">{{ order.remaining | number }} VND</span>
+                        </div>
+                        <!-- <div class="order-detail">
+                            <span class="label">Ngày thanh toán gần nhất:</span>
+                            <span class="value">{{ order.lastPaymentDate | date: 'dd/MM/yyyy' }}</span>
+                        </div> -->
+                    </div>
+                </mat-card>
+            </div>
+            <div *ngIf="!data?.debtDetails?.orders || data?.debtDetails?.orders.length === 0" class="no-orders">
+                <p>Không có đơn hàng nào còn nợ</p>
+            </div>
+        </div>
+    </div> <!-- Payment Success Confirmation -->
+    <div *ngIf="dialogMode === 'payment-success'" class="payment-success">
+        <mat-icon>check_circle</mat-icon>
+        <h3>Thanh toán thành công!</h3>
+
+        <div class="payment-details">
+            <div>
+                <span class="label">Khách hàng:</span>
+                <span class="value">{{ data?.paymentInfo?.customerName }}</span>
+            </div>
+            <div>
+                <span class="label">Số tiền:</span>
+                <span class="value">{{ data?.paymentInfo?.amount | number }} VND</span>
+            </div>
+            <div>
+                <span class="label">Phương thức:</span>
+                <span class="value">{{ getPaymentMethodText(data?.paymentInfo?.paymentMethod) }}</span>
+            </div>
+            <div *ngIf="data?.paymentInfo?.isBatch">
+                <span class="label">Thanh toán:</span>
+                <span class="value">{{ data?.paymentInfo?.orderCount || 0 }} đơn hàng</span>
+            </div>
+        </div>
+
+        <p class="success-message">Giao dịch đã được ghi nhận thành công.</p>
+    </div>
+
+    <!-- Delete Confirmation -->
+    <div *ngIf="dialogMode === 'confirm-delete'" class="delete-confirmation">
+        <mat-icon color="warn">warning</mat-icon>
+        <p>Bạn có chắc chắn muốn xóa giao dịch này?</p>
+        <p>Hành động này không thể hoàn tác.</p>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button (click)="close()">
+        {{ dialogMode === 'view-debt' ? 'Đóng' : 'Hủy' }}
+    </button>
+
+    <ng-container *ngIf="['add', 'edit', 'pay-debt', 'batch-payment'].includes(dialogMode)">
+        <button mat-raised-button color="primary" [disabled]="paymentForm.invalid" (click)="onSubmit()">
+            <mat-icon>{{
+                dialogMode === 'pay-debt' || dialogMode === 'batch-payment' ? 'payments' :
+                dialogMode === 'add' ? 'add' : 'save'
+                }}</mat-icon>
+            {{
+            dialogMode === 'pay-debt' ? 'Xác nhận thanh toán' :
+            dialogMode === 'batch-payment' ? 'Thanh toán các đơn hàng' :
+            dialogMode === 'add' ? (data?.type === 'payment' ? 'Tạo phiếu thu' : 'Tạo phiếu chi') : 'Cập nhật'
+            }}
+        </button>
+    </ng-container>
+
+    <button *ngIf="dialogMode === 'confirm-delete'" mat-raised-button color="warn" (click)="confirmDelete()">
+        Xác nhận xóa
+    </button>
+
+    <button *ngIf="dialogMode === 'payment-success'" mat-raised-button color="primary" (click)="close()">
+        <mat-icon>check</mat-icon> Đóng
+    </button>
+</mat-dialog-actions>

@@ -1,0 +1,253 @@
+<div class="dashboard-container">
+    <div class="loading-overlay" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Đang tải dữ liệu...</p>
+    </div>
+
+    <div class="error-message" *ngIf="error">
+        <p>{{ error }}</p>
+        <button class="btn-primary" (click)="loadDashboardData()">Thử lại</button>
+    </div>
+
+    <div class="dashboard-content" *ngIf="!isLoading && !error">
+        <!-- Summary cards -->
+        <div class="card-row">
+            <div class="card summary-card">
+                <div class="card-content">
+                    <div class="card-icon orders-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3 class="card-title">Đơn hàng</h3>
+                        <p class="card-value">{{ stats.totalOrders }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card summary-card">
+                <div class="card-content">
+                    <div class="card-icon customers-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3 class="card-title">Khách hàng</h3>
+                        <p class="card-value">{{ stats.totalCustomers }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card summary-card">
+                <div class="card-content">
+                    <div class="card-icon products-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3 class="card-title">Sản phẩm</h3>
+                        <p class="card-value">{{ stats.totalProducts }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card summary-card">
+                <div class="card-content">
+                    <div class="card-icon revenue-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3 class="card-title">Doanh thu</h3>
+                        <p class="card-value">{{ formatCurrency(stats.totalRevenue) }} ₫</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts first row -->
+        <div class="chart-row">
+            <div class="card chart-card sales-chart-card">
+                <div class="card-header">
+                    <h3>Doanh số bán hàng</h3>
+                </div>
+                <div class="card-body">
+                    <canvas #salesChart width="100%" height="30"></canvas>
+                </div>
+            </div>
+
+            <div class="card chart-card status-chart-card">
+                <div class="card-header">
+                    <h3>Trạng thái đơn hàng</h3>
+                </div>
+                <div class="card-body">
+                    <canvas #orderStatusChart width="100%" height="30"></canvas>
+                </div>
+                <div class="chart-footer">
+                        <div class="status-item">
+                            <span class="status-dot paid"></span>
+                            <span>Đã thanh toán: {{ stats.ordersByStatus['paid'] }}</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-dot debt"></span>
+                            <span>Còn nợ: {{ stats.ordersByStatus['unpaid'] }}</span>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts second row -->
+        <div class="chart-row">
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h3>Sản phẩm bán chạy</h3>
+                </div>
+                <div class="card-body">
+                    <canvas #topProductsChart width="100%" height="30"></canvas>
+                </div>
+            </div>
+
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h3>Khách hàng hàng đầu</h3>
+                </div>
+                <div class="card-body">
+                    <canvas #topCustomersChart width="100%" height="30"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data cards row -->
+        <div class="card-row">
+            <!-- Recent Orders -->
+            <div class="card data-card">
+                <div class="card-header">
+                    <h3>Đơn hàng gần đây</h3>
+                </div>
+                <div class="card-body orders-list">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Khách hàng</th>
+                                <th>Ngày</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let order of stats.recentOrders.slice(0, 5)">
+                                <td>{{ order.orderCode }}</td>
+                                <td>{{ order.customerId.name }}</td>
+                                <td>{{ order.date | date:'dd/MM/yyyy' }}</td>
+                                <td>{{ formatCurrency(order.total) }} ₫</td>
+                                <td>
+                                    <span class="status-badge"
+                                        [ngClass]="order.isPaid === true ? 'status-paid' : 'status-debt'">
+                                        {{ order.isPaid === true ? 'Đã thanh toán' : 'Còn nợ' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Customers with debt -->
+            <div class="card data-card">
+                <div class="card-header">
+                    <h3>Khách hàng còn nợ</h3>
+                </div>
+                <div class="card-body debt-list">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Khách hàng</th>
+                                <th>Điện thoại</th>
+                                <th>Số tiền nợ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let customer of customers.customersWithDebt">
+                                <td>{{ customer.name }}</td>
+                                <td>{{ customer.phone || 'Không có' }}</td>
+                                <td class="debt-amount">{{ formatCurrency(customer.totalDebt) }}</td>
+                            </tr>
+                            <tr *ngIf="customers.customersWithDebt.length === 0">
+                                <td colspan="3" class="text-center">Không có khách hàng nợ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> <!-- Inventory Summary -->
+        <div class="card-row">
+            <div class="card data-card inventory-card">
+                <div class="card-header">
+                    <h3>Tổng quan tồn kho</h3>
+                </div>
+                <div class="card-body">
+                    <div class="inventory-summary">
+                        <div class="inventory-stat">
+                            <span class="inventory-icon">
+                                <i class="fas fa-box-open"></i>
+                            </span>
+                            <div class="inventory-info">
+                                <h4>Sản phẩm trong kho</h4>
+                                <p>{{ inventory.totalProductsInStock }}</p>
+                            </div>
+                        </div>
+                        <div class="inventory-stat">
+                            <span class="inventory-icon warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                            <div class="inventory-info">
+                                <h4>Sản phẩm hết hàng</h4>
+                                <p>{{ inventory.totalOutOfStock }}</p>
+                            </div>
+                        </div>
+                        <div class="inventory-stat">
+                            <span class="inventory-icon value-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </span>
+                            <div class="inventory-info">
+                                <h4>Giá trị tồn kho (giá vốn)</h4>
+                                <p>{{ formatCurrency(inventory.totalInventoryCostValue || 0) }}</p>
+                            </div>
+                        </div>
+                        <div class="inventory-stat">
+                            <span class="inventory-icon sale-icon">
+                                <i class="fas fa-tags"></i>
+                            </span>
+                            <div class="inventory-info">
+                                <h4>Giá trị tồn kho (giá bán)</h4>
+                                <p>{{ formatCurrency(inventory.totalInventorySaleValue || 0) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="data-table" *ngIf="inventory.lowStockProducts.length > 0">
+                        <thead>
+                            <tr>
+                                <th>Mã sản phẩm</th>
+                                <th>Số lượng tồn</th>
+                                <th>Tồn trước</th>
+                                <th>Đã nhập</th>
+                                <th>Đã xuất</th>
+                                <th>Giá trị tồn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of inventory.lowStockProducts">
+                                <td>{{ item.productCode }}</td>
+                                <td [ngClass]="{'text-danger': item.currentStock <= 0}">{{ item.currentStock }}</td>
+                                <td>{{ item.oldStock }}</td>
+                                <td>{{ item.totalImported }}</td>
+                                <td>{{ item.totalExported }}</td>
+                                <td>{{ formatCurrency(item.costValue || 0) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div *ngIf="inventory.lowStockProducts.length === 0" class="text-center">
+                        <p>Không có sản phẩm nào sắp hết hàng</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,157 @@
+.products-container {
+  padding: 16px;
+}
+
+.products-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-section h2 {
+  margin: 0;
+}
+
+.action-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  min-width: 240px;
+}
+
+.table-wrapper {
+  margin-top: 16px;
+  overflow: auto;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+}
+
+.loading-overlay {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 10;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.empty-state {
+  padding: 24px;
+  text-align: center;
+}
+
+.no-records, .no-records-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #6c757d;
+  padding: 32px 0;
+}
+
+.no-records mat-icon, .no-records-mobile mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 8px;
+  opacity: 0.6;
+}
+
+/* Mobile card styles */
+.product-cards-mobile {
+  display: none;
+  margin-top: 16px;
+}
+
+.product-card {
+  margin-bottom: 16px;
+}
+
+.product-info {
+  margin-top: 8px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.info-label {
+  font-weight: 500;
+  color: #555;
+}
+
+.info-value {
+  font-weight: 500;
+}
+
+.btn-text {
+  margin-left: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .action-section {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .search-box {
+    width: 100%;
+  }
+  
+  .action-section button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .products-container {
+    padding: 8px;
+  }
+  
+  .responsive-table {
+    display: none;
+  }
+  
+  .product-cards-mobile {
+    display: block;
+  }
+  
+  .mat-paginator {
+    margin-top: 16px;
+  }
+}
