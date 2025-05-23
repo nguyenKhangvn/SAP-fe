@@ -44,6 +44,7 @@ import { LoginComponent } from './login.component';
 import { JwtInterceptor } from './services/jwt.interceptor';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { OrderDetailDialogComponent } from './order-detail-dialog/order-detail-dialog.component';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,7 @@ import { OrderDetailDialogComponent } from './order-detail-dialog/order-detail-d
     OrderListComponent,
     StockManagementComponent,
     LoginComponent,
-    OrderDetailDialogComponent,
+    OrderDetailDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -91,7 +92,8 @@ import { OrderDetailDialogComponent } from './order-detail-dialog/order-detail-d
     MatExpansionModule,
     NgxMaskModule.forRoot(),
     MatCheckboxModule,
-    MatChipsModule
+    MatChipsModule,
+    MatAutocompleteModule
   ],
   providers: [
     DatePipe,

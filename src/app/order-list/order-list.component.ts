@@ -13,7 +13,7 @@ import { OrderDetailDialogComponent } from '../order-detail-dialog/order-detail-
   styleUrls: ['./order-list.component.css']
 })
 export class OrderListComponent implements OnInit {
-  displayedColumns: string[] = ['customer', 'date', 'isPaid', 'total', 'actions'];
+  displayedColumns: string[] = ['orderCode', 'customer', 'date', 'isPaid', 'total', 'actions'];
   orders: any[] = [];
   selectedCustomer: any; 
   customers: any[] = [];
@@ -105,6 +105,20 @@ export class OrderListComponent implements OnInit {
   onMonthChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedMonth = input.value; // Lưu giá trị tháng được chọn
+  }
+
+  onRowClick(event: MouseEvent, order: any): void {
+    // Check if the click is in the actions column
+    const target = event.target as HTMLElement;
+    const clickedCell = target.closest('td');
+    
+    if (clickedCell && clickedCell.classList.contains('mat-column-actions')) {
+      // If click is on actions column, don't open details
+      return;
+    }
+    
+    // Otherwise open the order details
+    this.openOrderDetails(order);
   }
 
   openOrderDetails(order: any) {

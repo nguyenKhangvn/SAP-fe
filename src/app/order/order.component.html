@@ -16,12 +16,16 @@
 
                 <mat-form-field appearance="outline">
                     <mat-label>Khách hàng</mat-label>
-                    <mat-select [(ngModel)]="selectedCustomer">
-                        <mat-option [value]="null">-- Chọn khách --</mat-option>
-                        <mat-option *ngFor="let c of customers" [value]="c._id">{{ c.name }}</mat-option>
-                    </mat-select>
+                    <input type="text" matInput placeholder="Nhập tên khách" [matAutocomplete]="auto"
+                        [(ngModel)]="selectedCustomerName" (ngModelChange)="filterCustomers()" />
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCustomerSelected($event)">
+                        <mat-option *ngFor="let c of filteredCustomers" [value]="c.name">
+                            {{ c.name }}
+                        </mat-option>
+                    </mat-autocomplete>
                     <mat-icon matPrefix>person</mat-icon>
                 </mat-form-field>
+
 
                 <mat-form-field appearance="outline">
                     <mat-label>Trạng thái</mat-label>
@@ -45,11 +49,16 @@
                     <mat-card-content>
                         <mat-form-field appearance="outline" class="full-width">
                             <mat-label>Sản phẩm</mat-label>
-                            <mat-select [(ngModel)]="item.productCode" (selectionChange)="onProductChange(item)">
-                                <mat-option [value]="null">-- Chọn --</mat-option>
-                                <mat-option *ngFor="let p of products" [value]="p.code">{{ p.name }}</mat-option>
-                            </mat-select>
+                            <input type="text" matInput placeholder="Tìm sản phẩm" [(ngModel)]="item.productName"
+                                [matAutocomplete]="productAuto" (ngModelChange)="filterProducts(item)" />
+                            <mat-autocomplete #productAuto="matAutocomplete"
+                                (optionSelected)="onProductSelected($event, item)">
+                                <mat-option *ngFor="let p of item.filteredProducts" [value]="p.name">
+                                    {{ p.name }}
+                                </mat-option>
+                            </mat-autocomplete>
                         </mat-form-field>
+
 
                         <div class="quantity-price-row">
                             <mat-form-field appearance="outline">
@@ -95,12 +104,15 @@
                         <tr *ngFor="let item of orderItems; let i = index">
                             <td>
                                 <mat-form-field appearance="outline" class="full-width">
-                                    <mat-select [(ngModel)]="item.productCode"
-                                        (selectionChange)="onProductChange(item)">
-                                        <mat-option [value]="null">-- Chọn --</mat-option>
-                                        <mat-option *ngFor="let p of products" [value]="p.code">{{ p.name
-                                            }}</mat-option>
-                                    </mat-select>
+                                    <mat-label>Sản phẩm</mat-label>
+                                    <input type="text" matInput placeholder="Tìm sản phẩm" [(ngModel)]="item.productName"
+                                        [matAutocomplete]="productAutoDesktop" (ngModelChange)="filterProducts(item)" />
+                                    <mat-autocomplete #productAutoDesktop="matAutocomplete"
+                                        (optionSelected)="onProductSelected($event, item)">
+                                        <mat-option *ngFor="let p of item.filteredProducts" [value]="p.name">
+                                            {{ p.name }}
+                                        </mat-option>
+                                    </mat-autocomplete>
                                 </mat-form-field>
                             </td>
                             <td>

@@ -184,6 +184,8 @@
 
 .chart-card {
   padding: 0;
+  height: auto;
+  min-height: 400px;
 }
 
 .chart-card.full-width {
@@ -203,11 +205,21 @@
 
 .chart-card mat-card-content {
   padding: 24px;
+  height: 300px;
+  position: relative;
+}
+
+/* Canvas styling - ensures charts have proper dimensions */
+canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .chart-wrapper {
   position: relative;
   height: 300px;
+  width: 100%;
 }
 
 .card-header-actions {

@@ -1,18 +1,19 @@
 <div class="dialog-container">
-  <h2 mat-dialog-title>Chi tiết đơn hàng</h2>
-  
+  <h2 mat-dialog-title>{{ editMode ? 'Chỉnh sửa đơn hàng' : 'Chi tiết đơn hàng' }}</h2>
+
   <div *ngIf="isLoading" class="loading-container">
     <mat-spinner diameter="40"></mat-spinner>
     <p>Đang tải dữ liệu...</p>
   </div>
 
-  <mat-dialog-content *ngIf="!isLoading && order">
+  <!-- View mode -->
+  <mat-dialog-content *ngIf="!isLoading && order && !editMode">
     <div class="order-header">
       <div class="order-info">
         <p><strong>Mã đơn hàng:</strong> {{ order.orderCode }}</p>
-        <p><strong>Khách hàng:</strong> {{ order.customerId?.name || 'Không xác định' }}</p>
+        <p><strong>Khách hàng:</strong> {{ order.customer?.name || order.customerId?.name || 'Không xác định' }}</p>
         <p><strong>Ngày đặt hàng:</strong> {{ order.date | date:'dd/MM/yyyy' }}</p>
-        <p><strong>Trạng thái:</strong> 
+        <p><strong>Trạng thái:</strong>
           <span [ngClass]="order.isPaid ? 'status-paid' : 'status-debt'">
             {{ order.isPaid ? 'Đã thanh toán' : 'Còn nợ' }}
           </span>
@@ -21,16 +22,21 @@
     </div>
 
     <h3>Sản phẩm đã đặt</h3>
-    
-    <table mat-table [dataSource]="order.items" class="products-table mat-elevation-z1" *ngIf="order.items?.length > 0">
+
+    <div *ngIf="isLoadingProducts" class="loading-container">
+      <mat-spinner diameter="30"></mat-spinner>
+      <p>Đang tải sản phẩm...</p>
+    </div>
+
+    <table mat-table [dataSource]="products!" class="products-table mat-elevation-z1" *ngIf="!isLoadingProducts">
       <ng-container matColumnDef="code">
         <th mat-header-cell *matHeaderCellDef>Mã sản phẩm</th>
-        <td mat-cell *matCellDef="let item">{{ item.product.productCode || 'N/A' }}</td>
+        <td mat-cell *matCellDef="let item">{{ item.productCode || 'N/A' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Tên sản phẩm</th>
-        <td mat-cell *matCellDef="let item">{{ item.product.name }}</td>
+        <td mat-cell *matCellDef="let item">{{ item.productName }}</td>
       </ng-container>
 
       <ng-container matColumnDef="quantity">
@@ -45,25 +51,115 @@
 
       <ng-container matColumnDef="subtotal">
         <th mat-header-cell *matHeaderCellDef>Thành tiền</th>
-        <td mat-cell *matCellDef="let item">{{ formatCurrency(item.price * item.quantity) }} ₫</td>
+        <td mat-cell *matCellDef="let item">{{ formatCurrency(item.amount) }} ₫</td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="['code', 'name', 'quantity', 'price', 'subtotal']"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['code', 'name', 'quantity', 'price', 'subtotal']"></tr>
+      <ng-container matColumnDef="profit">
+        <th mat-header-cell *matHeaderCellDef>Lợi nhuận</th>
+        <td mat-cell *matCellDef="let item">{{ formatCurrency(item.profit) }} ₫</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <div *ngIf="!order.items?.length" class="no-items">
+    <div *ngIf="!isLoadingProducts && !products?.length" class="no-items">
       <mat-icon>info</mat-icon>
       <p>Không có thông tin sản phẩm</p>
     </div>
-    
+
     <div class="order-summary">
       <p class="total"><strong>Tổng tiền:</strong> <span>{{ formatCurrency(order.total) }} ₫</span></p>
       <p *ngIf="order.note" class="note"><strong>Ghi chú:</strong> {{ order.note }}</p>
     </div>
   </mat-dialog-content>
 
+  <!-- Edit mode -->
+  <mat-dialog-content *ngIf="!isLoading && order && editMode">
+    <form [formGroup]="orderForm" (ngSubmit)="saveChanges()">
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Mã đơn hàng</mat-label>
+          <input matInput formControlName="orderCode" readonly>
+          <mat-error *ngIf="orderForm.get('orderCode')?.hasError('required')">Vui lòng nhập mã đơn hàng</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Khách hàng</mat-label>
+          <mat-select formControlName="customerId">
+            <mat-option *ngFor="let customer of customers" [value]="customer._id">
+              {{ customer.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="orderForm.get('customerId')?.hasError('required')">Vui lòng chọn khách hàng</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Trạng thái</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="paid">Đã thanh toán</mat-option>
+            <mat-option value="debt">Còn nợ</mat-option>
+          </mat-select>
+          <mat-error *ngIf="orderForm.get('status')?.hasError('required')">Vui lòng chọn trạng thái</mat-error>
+        </mat-form-field>
+      </div>
+
+      <h3>Sản phẩm</h3>
+      <div formArrayName="items">
+        <div *ngFor="let item of itemsFormArray.controls; let i = index" [formGroupName]="i" class="item-row">
+          <div class="form-item-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Sản phẩm</mat-label>
+              <mat-select formControlName="productCode" (selectionChange)="onProductChange(i)">
+                <mat-option *ngFor="let product of productsList" [value]="product.code">
+                  {{ product.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="item.get('productCode')?.hasError('required')">Vui lòng chọn sản phẩm</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Số lượng</mat-label>
+              <input matInput type="number" formControlName="quantity" min="1" (change)="calculateTotal()">
+              <mat-error *ngIf="item.get('quantity')?.hasError('required')">Vui lòng nhập số lượng</mat-error>
+              <mat-error *ngIf="item.get('quantity')?.hasError('min')">Số lượng phải lớn hơn 0</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Đơn giá (VND)</mat-label>
+              <input matInput type="number" formControlName="price" (change)="calculateTotal()">
+              <mat-error *ngIf="item.get('price')?.hasError('required')">Vui lòng nhập đơn giá</mat-error>
+              <mat-error *ngIf="item.get('price')?.hasError('min')">Đơn giá phải lớn hơn 0</mat-error>
+            </mat-form-field>
+
+            <button type="button" mat-icon-button color="warn" (click)="removeItem(i)" matTooltip="Xóa sản phẩm">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="item-actions">
+          <button type="button" mat-stroked-button color="primary" (click)="addItem()">
+            <mat-icon>add</mat-icon> Thêm sản phẩm
+          </button>
+        </div>
+      </div>
+
+      <div class="total-section">
+        <strong>Tổng tiền:</strong> {{ formatCurrency(orderForm.get('total')?.value) }} ₫
+      </div>
+    </form>
+  </mat-dialog-content>
+
   <mat-dialog-actions align="end">
-    <button mat-button (click)="close()">Đóng</button>
+    <button *ngIf="!editMode" mat-button type="button" (click)="toggleEditMode()">Chỉnh sửa</button>
+    <button *ngIf="editMode" mat-button type="button" (click)="toggleEditMode()">Hủy</button>
+    <button *ngIf="editMode" mat-raised-button color="primary" [disabled]="isSaving" (click)="saveChanges()">
+      <mat-icon *ngIf="!isSaving">save</mat-icon>
+      <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
+      Lưu thay đổi
+    </button>
+    <button *ngIf="!editMode" mat-button (click)="close()">Đóng</button>
   </mat-dialog-actions>
 </div>

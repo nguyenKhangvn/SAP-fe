@@ -22,10 +22,10 @@
         <table mat-table [dataSource]="orders" class="mat-elevation-z2">
 
             <!-- Mã đơn -->
-            <!-- <ng-container matColumnDef="orderCode">
+            <ng-container matColumnDef="orderCode">
                 <th mat-header-cell *matHeaderCellDef>Mã đơn</th>
                 <td mat-cell *matCellDef="let order">{{ order.orderCode }}</td>
-            </ng-container> -->
+            </ng-container>
 
             <!-- Khách hàng -->
             <ng-container matColumnDef="customer">
@@ -67,10 +67,8 @@
 
             <!-- Header & Row -->
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
-                (click)="openOrderDetails(row)" 
-                class="order-row" 
-                matTooltip="Xem chi tiết đơn hàng"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="order-row compact-row"
+                matTooltip="Xem chi tiết đơn hàng" (click)="onRowClick($event, row)"></tr>
 
             <!-- Empty state -->
             <tr class="mat-row" *matNoDataRow>

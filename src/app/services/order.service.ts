@@ -126,4 +126,10 @@ export class OrderService {
     getOrdersByCustomerPhone(customerPhone: string): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/customer-phone/${customerPhone}`); 
     }
+    /**
+     * Get products for a specific order
+     */
+    getOrderProducts(orderId: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/${orderId}/products`);
+    }
 }

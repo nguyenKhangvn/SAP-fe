@@ -89,3 +89,62 @@
   font-weight: 500;
 }
 
+/* Table header styling to match compact rows */
+.mat-header-row {
+  height: 40px !important;
+}
+
+.mat-header-cell {
+  padding: 4px 8px !important;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Make table more compact overall */
+.table-responsive .mat-table {
+  width: 100%;
+}
+
+/* Order table styling */
+.order-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.order-row:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Compact row styling */
+.compact-row .mat-cell {
+  padding: 4px 8px !important; /* Reduced padding */
+  height: 40px !important;     /* Reduced height */
+  font-size: 13px;             /* Slightly smaller font */
+}
+
+/* Keep action buttons properly sized */
+.compact-row .mat-icon-button {
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+}
+
+.compact-row .mat-icon {
+  font-size: 18px;
+  line-height: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+/* Status styles */
+.paid {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.debt {
+  color: #f44336;
+  font-weight: 500;
+}
+

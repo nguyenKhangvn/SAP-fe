@@ -4,6 +4,8 @@ import { ProductService } from '../services/products.service';
 import { CustomerService } from '../services/customers.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { OrderService } from '../services/order.service';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+//import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-order',
@@ -13,11 +15,21 @@ import { OrderService } from '../services/order.service';
 
 export class OrderComponent implements OnInit {
   orderCode = '';
-  selectedCustomer: string | null = null;
-  status = 'paid';
+
   customers: any[] = [];
+  selectedCustomer: string | null = null;
+  selectedCustomerName: string = ''; // tên gõ vào
+  filteredCustomers = this.customers;
+  
+  status = 'paid';
+
+  
   products: any[] = [];
+
   orderItems: any[] = [];
+  filteredProducts = [...this.products];
+  productFilter = '';
+
   isMobile: boolean = false;
   screenWidth: number = 0;
 
@@ -46,6 +58,10 @@ export class OrderComponent implements OnInit {
   ngOnInit(): void {
     this.loadCustomers();
     this.loadProducts();
+    // Initialize an empty order item if none exists
+    if (this.orderItems.length === 0) {
+      this.addItem();
+    }
   }
   loadCustomers() {
    this.customerService.getCustomers().subscribe({
@@ -53,15 +69,63 @@ export class OrderComponent implements OnInit {
       error: err => alert('Có lỗi xảy ra: '  + err.error.message)
    });
   }
+
+  filterCustomers() {
+  const value = this.selectedCustomerName.toLowerCase();
+  this.filteredCustomers = this.customers.filter(c =>
+    c.name.toLowerCase().includes(value)
+  );
+}
+
+onCustomerSelected(event: MatAutocompleteSelectedEvent) {
+  const selectedName = event.option.value;
+  const selected = this.customers.find(c => c.name === selectedName);
+  this.selectedCustomer = selected?._id || null;
+}
   loadProducts() {
     this.productService.getProducts().subscribe({
       next: (res: any) => this.products = res,
       error: err => alert('Có lỗi xảy ra: ' + err.error.message)
     });
   }
+  filterProducts(item: any) {
+  const value = item.productName?.toLowerCase() || '';
+  item.filteredProducts = this.products.filter(p =>
+    p.name.toLowerCase().includes(value)
+  );
+}
+
+onProductSelected(event: MatAutocompleteSelectedEvent, item: any) {
+  const selectedName = event.option.value;
+  const selectedProduct = this.products.find(p => p.name === selectedName);
+  if (selectedProduct) {
+    item.productCode = selectedProduct.code;
+    item.productName = selectedProduct.name;
+    item.price = selectedProduct.salePrice || selectedProduct.price || 0;
+  }
+}
+
+filterProductOptions() {
+  const filterValue = this.productFilter.toLowerCase();
+  this.filteredProducts = this.products.filter(p =>
+    p.name.toLowerCase().includes(filterValue)
+  );
+}
+
+onSelectOpened() {
+  // reset filter mỗi khi mở lại select
+  this.productFilter = '';
+  this.filteredProducts = [...this.products];
+}
 
   addItem() {
-    this.orderItems.push({ productCode: '', quantity: 1, price: 0 });
+    this.orderItems.push({ 
+      productCode: '', 
+      productName: '',
+      quantity: 1, 
+      price: 0,
+      filteredProducts: [...this.products] 
+    });
   }
 
   removeItem(index: number) {
@@ -141,7 +205,10 @@ export class OrderComponent implements OnInit {
   resetForm() {
     this.orderCode = '';
     this.selectedCustomer = null;
+    this.selectedCustomerName = '';
     this.status = 'paid';
     this.orderItems = [];
+    // Add one empty item to start with
+    this.addItem();
   }
 }

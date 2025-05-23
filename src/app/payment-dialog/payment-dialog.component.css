@@ -72,9 +72,23 @@ textarea {
   color: #1976d2;
 }
 
+.debt-orders {
+  max-height: 300px; /* Giới hạn chiều cao tối đa */
+  overflow-y: auto; /* Thêm thanh cuộn dọc khi nội dung vượt quá */
+  padding: 0 5px; /* Thêm padding để tránh nội dung sát với thanh cuộn */
+  border: 1px solid #eee; /* Thêm viền để phân biệt vùng có thanh cuộn */
+  border-radius: 4px; /* Bo tròn góc */
+  margin-bottom: 16px; /* Thêm khoảng cách dưới */
+}
+
 .debt-orders h4 {
   margin: 16px 0;
   font-weight: 500;
+  position: sticky;
+  top: 0;
+  background-color: white; /* Đảm bảo tiêu đề không bị che khi cuộn */
+  padding: 8px 0; /* Thêm padding cho tiêu đề */
+  z-index: 1; /* Đảm bảo hiển thị trên các phần tử khác */
 }
 
 .delete-confirmation {
