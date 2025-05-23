@@ -5,7 +5,7 @@ import Chart from 'chart.js/auto';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css','./dashboard-v1.component.css' ]
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
   // Chart references
