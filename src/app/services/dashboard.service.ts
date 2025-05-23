@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs'; // Import 'map' operator
 import { environment } from 'src/environments/environment';
 
 export interface DashboardStats {
@@ -24,9 +24,20 @@ export interface InventoryStats {
   lowStockProducts: InventoryItem[];
   totalProductsInStock: number;
   totalOutOfStock: number;
-  totalInventoryCostValue?: number; // Total value based on cost price
-  totalInventorySaleValue?: number; // Total value based on sale price
+  totalInventoryCostValue?: number; // Total value based on cost price (mapped from totalStockValue)
+  totalInventorySaleValue?: number; // Total value based on sale price (mapped from totalPotentialSaleValue)
 }
+
+// Internal interface to match the exact API response structure for inventory
+interface RawInventoryApiResponse {
+  inventorySummary: InventoryItem[];
+  lowStockProducts: InventoryItem[];
+  totalProductsInStock: number;
+  totalOutOfStock: number;
+  totalStockValue?: number; // As received from API
+  totalPotentialSaleValue?: number; // As received from API
+}
+
 
 export interface CustomerStats {
   topCustomers: TopCustomer[];
@@ -109,9 +120,21 @@ export class DashboardService {
 
   /**
    * Get inventory statistics
+   * Maps API response fields (totalStockValue, totalPotentialSaleValue)
+   * to the expected interface fields (totalInventoryCostValue, totalInventorySaleValue).
    */
   getInventoryStats(): Observable<InventoryStats> {
-    return this.http.get<InventoryStats>(`${this.apiUrl}/inventory`);
+    return this.http.get<RawInventoryApiResponse>(`${this.apiUrl}/inventory`).pipe(
+      map(rawInventory => ({
+        inventorySummary: rawInventory.inventorySummary,
+        lowStockProducts: rawInventory.lowStockProducts,
+        totalProductsInStock: rawInventory.totalProductsInStock,
+        totalOutOfStock: rawInventory.totalOutOfStock,
+        // Map API fields to the expected interface fields
+        totalInventoryCostValue: rawInventory.totalStockValue,
+        totalInventorySaleValue: rawInventory.totalPotentialSaleValue,
+      }))
+    );
   }
 
   /**
@@ -127,7 +150,7 @@ export class DashboardService {
   getAllDashboardData() {
     return forkJoin({
       stats: this.getDashboardStats(),
-      inventory: this.getInventoryStats(),
+      inventory: this.getInventoryStats(), // This now returns mapped data
       customers: this.getCustomerStats()
     });
   }
