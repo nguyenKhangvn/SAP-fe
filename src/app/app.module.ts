@@ -22,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle'; 
 import { MatTableModule } from '@angular/material/table';
+import { MatChipsModule } from '@angular/material/chips';
 import { ProductDialogComponent } from './product-dialog/product-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -42,6 +43,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LoginComponent } from './login.component';
 import { JwtInterceptor } from './services/jwt.interceptor';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { OrderDetailDialogComponent } from './order-detail-dialog/order-detail-dialog.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +59,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     OrderListComponent,
     StockManagementComponent,
     LoginComponent,
+    OrderDetailDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -87,7 +90,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatTooltipModule,
     MatExpansionModule,
     NgxMaskModule.forRoot(),
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatChipsModule
   ],
   providers: [
     DatePipe,

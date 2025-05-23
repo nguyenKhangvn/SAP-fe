@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { OrderDetailDialogComponent } from '../order-detail-dialog/order-detail-dialog.component';
 
 @Component({
   selector: 'app-order-list',
@@ -104,5 +105,12 @@ export class OrderListComponent implements OnInit {
   onMonthChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedMonth = input.value; // Lưu giá trị tháng được chọn
+  }
+
+  openOrderDetails(order: any) {
+    this.dialog.open(OrderDetailDialogComponent, {
+      width: '800px',
+      data: { orderId: order._id }
+    });
   }
 }

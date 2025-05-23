@@ -67,7 +67,10 @@
 
             <!-- Header & Row -->
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                (click)="openOrderDetails(row)" 
+                class="order-row" 
+                matTooltip="Xem chi tiết đơn hàng"></tr>
 
             <!-- Empty state -->
             <tr class="mat-row" *matNoDataRow>
@@ -98,8 +101,8 @@
                 </div>
                 <div class="order-detail-row">
                     <span class="label">Trạng thái:</span>
-                    <span class="value" [ngClass]="order.status === 'paid' ? 'paid' : 'debt'">
-                        {{ order.status === 'paid' ? 'Đã thanh toán' : 'Còn nợ' }}
+                    <span class="value" [ngClass]="order.isPaid ? 'paid' : 'debt'">
+                        {{ order.isPaid ? 'Đã thanh toán' : 'Còn nợ' }}
                     </span>
                 </div>
                 <div class="order-detail-row">
@@ -108,7 +111,10 @@
                 </div>
             </mat-card-content>
             <mat-card-actions>
-                <button mat-button color="warn" (click)="deleteOrder(order)">
+                <button mat-button color="primary" (click)="openOrderDetails(order); $event.stopPropagation()">
+                    <mat-icon>visibility</mat-icon> Chi tiết
+                </button>
+                <button mat-button color="warn" (click)="deleteOrder(order); $event.stopPropagation()">
                     <mat-icon>delete</mat-icon> Xóa
                 </button>
             </mat-card-actions>

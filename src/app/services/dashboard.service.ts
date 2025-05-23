@@ -9,6 +9,9 @@ export interface DashboardStats {
   totalProducts: number;
   totalRevenue: number;
   totalDebt: number;
+  totalProfit: number;
+  paidOrdersCount?: number;
+  debtOrdersCount?: number;
   recentOrders: RecentOrder[];
   allOrders: RecentOrder[];
   ordersByStatus: { [key: string]: number };
@@ -58,15 +61,20 @@ export interface SalesOverTime {
 }
 
 export interface InventoryItem {
-  _id: string;
+  _id?: string;
   productCode: string;
+  productName?: string;
   currentStock: number;
-  oldStock: number;
-  newStock: number;
-  totalImported: number;
-  totalExported: number;
+  oldStock?: number;
+  newStock?: number;
+  imported?: number;
+  exported?: number;
+  totalImported?: number;
+  totalExported?: number;
   costValue?: number; // Value based on cost price
   saleValue?: number; // Value based on sale price
+  stockValue?: number;
+  potentialSaleValue?: number;
 }
 
 export interface TopCustomer {
@@ -122,5 +130,16 @@ export class DashboardService {
       inventory: this.getInventoryStats(),
       customers: this.getCustomerStats()
     });
+  }
+
+  /**
+   * Get dashboard data filtered by time range
+   * @param timeRange The time range to filter data by ('today', 'week', 'month', 'quarter', 'year', 'all')
+   */
+  getDashboardData(timeRange: string = 'all'): Observable<any> {
+    // In real implementation, you would send the timeRange parameter to the backend
+    // For now, we'll just use the existing method and add a comment
+    console.log(`Getting dashboard data for time range: ${timeRange}`);
+    return this.getAllDashboardData();
   }
 }
