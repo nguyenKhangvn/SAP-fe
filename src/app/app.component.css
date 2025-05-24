@@ -43,12 +43,6 @@ html, body {
 }
 
 
-/* --- YOUR CUSTOM CLASSES (as provided) --- */
-
-.custom-sidenav-container {
-  /* This class is already on sidenav-container, no unique styles here based on your previous input */
-}
-
 .custom-sidenav {
   background: linear-gradient(to bottom, #3f51b5, #2c387e);
   box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);

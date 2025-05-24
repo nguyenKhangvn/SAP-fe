@@ -1,0 +1,123 @@
+/* Dashboard specific table column styles */
+
+/* Recent Orders table */
+.data-card table.mat-table td.mat-cell.mat-column-orderCode:before {
+  content: "Mã đơn: ";
+}
+
+.data-card table.mat-table td.mat-cell.mat-column-customer:before {
+  content: "Khách hàng: ";
+}
+
+.data-card table.mat-table td.mat-cell.mat-column-date:before {
+  content: "Ngày: ";
+}
+
+.data-card table.mat-table td.mat-cell.mat-column-total:before {
+  content: "Tổng tiền: ";
+}
+
+.data-card table.mat-table td.mat-cell.mat-column-status:before {
+  content: "Trạng thái: ";
+}
+
+/* Customers with debt table */
+.data-card table.mat-table td.mat-cell.mat-column-name:before {
+  content: "Khách hàng: ";
+}
+
+.data-card table.mat-table td.mat-cell.mat-column-phone:before {
+  content: "Điện thoại: ";
+}
+
+.data-card table.mat-table td.mat-cell.mat-column-debt:before {
+  content: "Số tiền nợ: ";
+}
+
+.data-card table.mat-table td.mat-cell.mat-column-actions:before {
+  content: "Thao tác: ";
+}
+
+/* Low stock products table */
+.inventory-card table.mat-table td.mat-cell.mat-column-productCode:before {
+  content: "Mã sản phẩm: ";
+}
+
+.inventory-card table.mat-table td.mat-cell.mat-column-currentStock:before {
+  content: "Số lượng tồn: ";
+}
+
+.inventory-card table.mat-table td.mat-cell.mat-column-oldStock:before {
+  content: "Tồn trước: ";
+}
+
+.inventory-card table.mat-table td.mat-cell.mat-column-imported:before {
+  content: "Đã nhập: ";
+}
+
+.inventory-card table.mat-table td.mat-cell.mat-column-exported:before {
+  content: "Đã xuất: ";
+}
+
+.inventory-card table.mat-table td.mat-cell.mat-column-value:before {
+  content: "Giá trị tồn: ";
+}
+
+/* Card styles related to tables */
+.data-card {
+  padding: 0;
+}
+
+.data-card mat-card-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.data-card mat-card-content {
+  padding: 0;
+  overflow: auto;
+}
+
+.header-with-icon {
+  display: flex;
+  align-items: center;
+}
+
+.header-with-icon mat-icon {
+  margin-right: 8px;
+  color: #3f51b5;
+}
+
+.card-actions {
+  margin-left: auto;
+}
+
+/* Data row layout */
+.data-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .data-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Responsive card adjustments */
+@media (max-width: 768px) {
+  .data-row {
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .data-card mat-card-header {
+    padding: 12px 16px !important;
+  }
+  
+  .card-actions button {
+    padding: 0 8px;
+  }
+}

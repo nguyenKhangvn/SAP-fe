@@ -1,0 +1,105 @@
+/* Dashboard layout and general styles */
+
+.dashboard-container {
+  padding: 24px;
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: #f5f7fa;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Loading and error states */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-overlay p {
+  margin-top: 16px;
+  font-size: 16px;
+  color: #3f51b5;
+}
+
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px;
+  text-align: center;
+}
+
+.error-message mat-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 16px;
+}
+
+.error-message p {
+  font-size: 18px;
+  margin-bottom: 24px;
+  color: #f44336;
+}
+
+/* Dashboard header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.dashboard-header h1 {
+  font-weight: 400;
+  font-size: 28px;
+  margin: 0;
+  color: #263238;
+}
+
+.dashboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.date-range {
+  width: 180px;
+  margin-bottom: 0;
+}
+
+/* Mobile responsive layout */
+@media (max-width: 600px) {
+  .dashboard-container {
+    padding: 16px 8px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-header h1 {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+
+  .dashboard-actions {
+    width: 100%;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .date-range {
+    width: 100%;
+  }
+}

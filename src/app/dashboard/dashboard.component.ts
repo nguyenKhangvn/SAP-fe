@@ -66,6 +66,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   topCustomersChart: Chart | null = null;
   profitChart: Chart | null = null;
 
+  statusForPaymentPaidAndUnpaid: { paid: number; unpaid: number } = { paid: 0, unpaid: 0 };
+
   constructor(private dashboardService: DashboardService) { }
 
   ngOnInit() {
@@ -94,9 +96,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.customers = response.customers;
 
         // Ensure ordersByStatus is correctly populated for the pie chart
-        this.stats.ordersByStatus = {
-          'paid': this.stats.paidOrdersCount || 0,
-          'unpaid': this.stats.debtOrdersCount || 0
+        let paidCnt = this.stats.recentOrders.filter(o => o.isPaid === true).length;
+        let unpaidCnt = this.stats.recentOrders.filter(o => o.isPaid === false).length;
+        this.statusForPaymentPaidAndUnpaid = {
+          paid: paidCnt || 0,
+          unpaid: unpaidCnt || 0
         };
 
         // Format the dates for recent orders if needed for display
@@ -349,12 +353,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const ctx = this.orderStatusChartRef.nativeElement.getContext('2d');
 
     // Use direct counts from API response
-    const paid = this.stats.paidOrdersCount || 0;
-    const unpaid = this.stats.debtOrdersCount || 0;
+    const paid = this.statusForPaymentPaidAndUnpaid.paid || 0;
+    const unpaid = this.statusForPaymentPaidAndUnpaid.unpaid || 0;
 
     // If both are 0, set a default value to show something on the chart (e.g., 1 for paid)
     // This prevents Chart.js from throwing an error with empty datasets.
-    const chartData = (paid === 0 && unpaid === 0) ? [1, 0] : [paid, unpaid]; // Show 1 paid if no data
+    const chartData = (paid === 0 && unpaid === 0) ? [0, 0] : [paid, unpaid]; // Show 1 paid if no data
 
     this.orderStatusChart = new Chart(ctx, {
       type: 'pie',

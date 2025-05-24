@@ -1,0 +1,154 @@
+/* Mobile responsive table styles for the shop management app */
+
+/* Base table styles */
+.table-container {
+  max-height: 400px;
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-column-status, .mat-column-actions {
+  width: 140px;
+}
+
+.price-cell, .debt-amount {
+  font-weight: 500;
+  text-align: right;
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+  color: #78909c;
+  text-align: center;
+}
+
+.no-data mat-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 16px;
+  color: #4caf50;
+}
+
+/* Mobile responsive table transformations */
+@media screen and (max-width: 768px) {
+  table.mat-table {
+    border: 0;
+    vertical-align: middle;
+    box-shadow: none !important;
+  }
+
+  table.mat-table caption {
+    font-size: 1em;
+  }
+  
+  /* Hide table headers (but not display: none;, for accessibility) */
+  table.mat-table tr.mat-header-row {
+    height: 0;
+    padding: 0;
+    border: none;
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  table.mat-table th.mat-header-cell {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    outline: 0;
+    overflow: hidden;
+  }
+  
+  table.mat-table tr.mat-row {
+    border-bottom: 5px solid #f5f7fa;
+    display: block;
+    margin-bottom: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    background-color: white;
+  }
+  
+  table.mat-table td.mat-cell {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    padding: 8px 8px 8px 0;
+    text-align: right;
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+  }
+  
+  table.mat-table td.mat-cell:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 500;
+    color: #78909c;
+  }
+  
+  /* Reset text alignment for cells with special content */
+  table.mat-table td.mat-cell.price-cell,
+  table.mat-table td.mat-cell.debt-amount {
+    text-align: right;
+  }
+  
+  /* Handle chip and action buttons */
+  table.mat-table td.mat-cell mat-chip-list {
+    display: inline-block;
+    margin-left: 8px;
+  }
+  
+  table.mat-table td.mat-cell button.mat-icon-button {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Special handling for last cell in a row - no border */
+  table.mat-table td.mat-cell:last-child {
+    border-bottom: none;
+  }
+  
+  /* Special handling for the status column with chips */
+  table.mat-table td.mat-cell.mat-column-status .mat-chip-list {
+    display: inline-flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+  
+  /* Improve spacing for small screens */
+  .table-container {
+    padding: 0;
+    max-height: none;
+    overflow: visible;
+  }
+  
+  /* Add spacing between card title and content */
+  .mat-card-header + .mat-card-content {
+    padding-top: 8px;
+  }
+  
+  /* Fix padding for card footers */
+  .mat-card-footer {
+    padding: 8px 16px;
+    margin: 0;
+  }
+  
+  /* Properly handle mat-chip in mobile view */
+  .mat-chip {
+    font-size: 12px;
+    min-height: 24px;
+    padding: 4px 8px;
+  }
+}

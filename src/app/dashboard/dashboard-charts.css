@@ -1,0 +1,137 @@
+/* Dashboard chart styles */
+
+/* Chart Row */
+.chart-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1100px) {
+  .chart-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-card {
+  padding: 0;
+  height: auto;
+  min-height: 400px;
+}
+
+.chart-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.chart-card mat-card-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.chart-card mat-card-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.chart-card mat-card-content {
+  padding: 24px;
+  height: 300px;
+  position: relative;
+}
+
+/* Canvas styling - ensures charts have proper dimensions */
+canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+.card-header-actions {
+  margin-left: auto;
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  gap: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-dot.paid {
+  background-color: #43a047;
+}
+
+.status-dot.debt {
+  background-color: #e53935;
+}
+
+/* Mobile responsive chart styling */
+@media screen and (max-width: 768px) {
+  .chart-row {
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .chart-card {
+    min-height: 350px;
+  }
+  
+  .chart-card mat-card-content {
+    height: auto;
+    min-height: 220px;
+    padding: 16px !important;
+  }
+  
+  .chart-wrapper {
+    height: 220px;
+  }
+  
+  .chart-card mat-card-header {
+    padding: 12px 16px !important;
+  }
+  
+  .chart-card mat-card-title {
+    font-size: 16px !important;
+  }
+  
+  /* Improve legend display on small screens */
+  .chart-legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  
+  /* Improve spacing for status items */
+  .status-item {
+    margin: 4px 0;
+  }
+  
+  /* Make status dots smaller on mobile */
+  .status-dot {
+    width: 10px;
+    height: 10px;
+  }
+}
