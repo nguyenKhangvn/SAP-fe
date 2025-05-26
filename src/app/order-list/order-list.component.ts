@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { firstValueFrom } from 'rxjs';
 import { OrderDetailDialogComponent } from '../order-detail-dialog/order-detail-dialog.component';
 
 @Component({
@@ -65,9 +66,10 @@ export class OrderListComponent implements OnInit {
     }
   }
 
-  exportToExcel(selectedMonth?: string): void {
+  async exportToExcel(selectedMonth?: string): Promise<void> {
+    this.isLoading = true;
     let filteredOrders = this.orders;
-
+    
     if (selectedMonth) {
       const [year, month] = selectedMonth.split('-').map(Number); // "2025-05" => [2025, 5]
 
@@ -78,28 +80,59 @@ export class OrderListComponent implements OnInit {
 
       if (filteredOrders.length === 0) {
         alert('Không có đơn hàng nào trong tháng đã chọn.');
+        this.isLoading = false;
         return;
       }
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(filteredOrders.map(order => ({
-      'Mã đơn': order.orderCode,
-      'Khách hàng': order.customerId?.name || '—',
-      'Ngày': new Date(order.date).toLocaleDateString('vi-VN'), // Định dạng ngày tháng năm
-      'Trạng thái': order.isPaid ? 'Đã thanh toán' : 'Còn nợ',
-      'Tổng tiền': order.total
-    })));
+    try {
+      // Fetch profit information for each order
+      const ordersWithProfit = await Promise.all(
+        filteredOrders.map(async (order) => {            try {
+            const orderDetails = await firstValueFrom(this.orderService.getOrderProducts(order._id));
+            const products = orderDetails?.products || [];
+            
+            // Calculate total profit from all products
+            const totalProfit = products.reduce((sum: number, product: any) => sum + (product.profit || 0), 0);
+            return {
+              ...order,
+              totalProfit
+            };
+          } catch (error) {
+            console.error(`Error fetching details for order ${order._id}:`, error);
+            return {
+              ...order,
+              totalProfit: 0
+            };
+          }
+        })
+      );
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Đơn hàng theo tháng');
+      const worksheet = XLSX.utils.json_to_sheet(ordersWithProfit.map(order => ({
+        'Mã đơn': order.orderCode,
+        'Khách hàng': order.customerId?.name || '—',
+        'Ngày': new Date(order.date).toLocaleDateString('vi-VN'),
+        'Trạng thái': order.isPaid ? 'Đã thanh toán' : 'Còn nợ',
+        'Lợi nhuận': order.totalProfit || 0,
+        'Tổng tiền': order.total
+      })));
 
-    const fileName = selectedMonth
-      ? `Don_hang_thang_${selectedMonth.replace('-', '_')}.xlsx`
-      : `Don_hang_tat_ca.xlsx`;
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Đơn hàng theo tháng');
 
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(blob, fileName);
+      const fileName = selectedMonth
+        ? `Don_hang_thang_${selectedMonth.replace('-', '_')}.xlsx`
+        : `Don_hang_tat_ca.xlsx`;
+
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+      saveAs(blob, fileName);
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      this.snackBar.open('Không thể xuất file Excel', 'Đóng', { duration: 3000 });
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   onMonthChange(event: Event): void {

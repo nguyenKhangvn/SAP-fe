@@ -2,20 +2,19 @@
     <mat-card-title>Danh sách đơn hàng</mat-card-title>
 
     <div class="loading-overlay" *ngIf="isLoading">
-        <div class="spinner"></div>
+        <mat-spinner diameter="40"></mat-spinner>
         <p>Đang xử lý...</p>
     </div>
 
     <!-- Nút xuất Excel -->
-    <div class="export-excel-button" *ngIf="!isLoading">
+    <div class="export-excel-button">
         <div class="export-controls">
             <label for="monthPicker">Chọn tháng:</label>
-            <input id="monthPicker" type="month" (change)="onMonthChange($event)" />
-            <button mat-raised-button color="primary" (click)="exportToExcel(selectedMonth)">
+            <input id="monthPicker" type="month" (change)="onMonthChange($event)" [disabled]="isLoading" />
+            <button mat-raised-button color="primary" (click)="exportToExcel(selectedMonth)" [disabled]="isLoading">
                 <mat-icon>file_download</mat-icon> Xuất Excel
             </button>
         </div>
-
     </div>
 
     <div class="table-responsive">
